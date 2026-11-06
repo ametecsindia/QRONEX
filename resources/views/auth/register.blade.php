@@ -31,7 +31,7 @@
     <legend class="font-semibold text-navy mb-2 col-span-full">Your account (company owner)</legend>
     <x-field name="name" label="Full name" required />
     <x-field name="email" label="Work email" type="email" required autocomplete="username" />
-    <x-field name="password" label="Password" type="password" required autocomplete="new-password" hint="10+ characters, upper and lower case, a number." />
+    <x-field name="password" label="Password" type="password" required autocomplete="new-password" hint="At least 8 characters (numbers only is fine)." />
     <x-field name="password_confirmation" label="Confirm password" type="password" required autocomplete="new-password" />
   </fieldset>
   <p class="text-xs text-slate-500">Plans: @foreach($plans as $p){{ $p->name }} ({{ $p->min_employees }}–{{ $p->max_employees >= 100000 ? '∞' : $p->max_employees }})@if(!$loop->last), @endif @endforeach. Your plan is picked from team size.</p>

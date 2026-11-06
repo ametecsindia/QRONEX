@@ -58,7 +58,7 @@ class TwoFactorController extends Controller
 
     public function password(Request $request)
     {
-        $request->validate(['current_password' => 'required|current_password', 'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::min(10)->mixedCase()->numbers()]]);
+        $request->validate(['current_password' => 'required|current_password', 'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()]]);
         $request->user()->forceFill(['password' => $request->input('password')])->save();
         AuditLog::record('auth.password_changed', $request->user()->email);
 

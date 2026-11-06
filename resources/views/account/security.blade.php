@@ -30,7 +30,7 @@
   <form method="post" action="{{ route('account.password') }}" class="card space-y-3">
     @csrf <h2 class="font-semibold text-navy">Change password</h2>
     <x-field name="current_password" label="Current password" type="password" required autocomplete="current-password" />
-    <x-field name="password" label="New password" type="password" required autocomplete="new-password" hint="10+ characters, upper and lower case, a number." />
+    <x-field name="password" label="New password" type="password" required autocomplete="new-password" hint="At least 8 characters (numbers only is fine)." />
     <x-field name="password_confirmation" label="Confirm new password" type="password" required autocomplete="new-password" />
     <button class="btn">Change password</button>
   </form>

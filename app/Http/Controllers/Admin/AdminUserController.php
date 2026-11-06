@@ -24,7 +24,7 @@ class AdminUserController extends Controller
         $d = $request->validate([
             'name' => 'required|string|max:120',
             'email' => 'required|email|max:190|unique:users,email',
-            'password' => ['required', Password::min(10)->mixedCase()->numbers()],
+            'password' => ['required', Password::defaults()],
             'role' => ['required', Rule::in(self::ROLES)],
         ]);
         $u = User::create($d + ['tenant_id' => null]);

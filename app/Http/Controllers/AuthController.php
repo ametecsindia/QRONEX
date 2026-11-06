@@ -81,7 +81,7 @@ class AuthController extends Controller
             'billing_cycle' => 'required|in:monthly,quarterly,annual',
             'name' => 'required|string|max:120',
             'email' => 'required|email|max:190|unique:users,email',
-            'password' => ['required', 'confirmed', Password::min(10)->mixedCase()->numbers()],
+            'password' => ['required', 'confirmed', Password::defaults()],
             'terms' => 'accepted',
         ], ['slug.not_in' => 'That address is reserved. Choose another.', 'gstin.regex' => 'Enter a valid 15-character GSTIN.']);
 

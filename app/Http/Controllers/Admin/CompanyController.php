@@ -50,7 +50,7 @@ class CompanyController extends Controller
             'billing_cycle' => 'required|in:monthly,quarterly,annual',
             'name' => 'required|string|max:120',
             'email' => 'required|email|max:190|unique:users,email',
-            'password' => ['required', Password::min(8)],
+            'password' => ['required', Password::defaults()],
         ], ['slug.not_in' => 'That address is reserved. Choose another.', 'gstin.regex' => 'Enter a valid 15-character GSTIN.']);
 
         $plan = Plan::forEmployees((int) $data['employees']);

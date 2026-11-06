@@ -39,7 +39,7 @@
   @csrf <div class="col-span-full"><div class="card-t">Add platform admin</div><p class="text-sm text-slate-500">For Ametecs staff only. Customer users are added by each company in their own portal.</p></div>
   <x-field name="name" label="Name" required />
   <x-field name="email" label="Email" type="email" required />
-  <x-field name="password" label="Temporary password" type="password" required autocomplete="new-password" hint="10+ chars, upper, lower, number" />
+  <x-field name="password" label="Temporary password" type="password" required autocomplete="new-password" hint="At least 8 characters (numbers only is fine)" />
   <div><label class="label">Role</label><select name="role" class="input">@foreach($labels as $r => $l)<option value="{{ $r }}" @selected(old('role', 'support_admin') === $r)>{{ $l }}</option>@endforeach</select></div>
   <div><button class="btn">Add admin</button></div>
 </form>

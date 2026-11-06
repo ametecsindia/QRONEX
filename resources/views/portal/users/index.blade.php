@@ -53,7 +53,7 @@
   @csrf <div class="col-span-full"><div class="card-t">Add user</div><p class="text-sm text-slate-500">Share the temporary password securely; they can change it under Account &amp; security.</p></div>
   <x-field name="name" label="Name" required />
   <x-field name="email" label="Email" type="email" required />
-  <x-field name="password" label="Temporary password" type="password" required autocomplete="new-password" hint="10+ chars, upper, lower, number" />
+  <x-field name="password" label="Temporary password" type="password" required autocomplete="new-password" hint="At least 8 characters (numbers only is fine)" />
   <div><label class="label">Role</label><select name="role" class="input">@foreach($roles as $r)<option value="{{ $r }}" @selected(old('role') === $r)>{{ $labels[$r] }}</option>@endforeach</select></div>
   <div><label class="label">Offices (scoped roles)</label><select name="offices[]" multiple size="3" class="input">@foreach($offices as $o)<option value="{{ $o->id }}">{{ $o->name }}</option>@endforeach</select></div>
   <div><button class="btn">Create user</button></div>

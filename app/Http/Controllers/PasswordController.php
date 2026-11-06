@@ -32,7 +32,7 @@ class PasswordController extends Controller
     {
         $request->validate([
             'token' => 'required', 'email' => 'required|email',
-            'password' => ['required', 'confirmed', Rule::min(10)->mixedCase()->numbers()],
+            'password' => ['required', 'confirmed', Rule::defaults()],
         ]);
 
         $status = Password::reset($request->only('email', 'password', 'password_confirmation', 'token'), function ($user, $password) {

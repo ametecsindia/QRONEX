@@ -33,7 +33,7 @@ class UserController extends Controller
         $d = $request->validate([
             'name' => 'required|string|max:120',
             'email' => 'required|email|max:190|unique:users,email',
-            'password' => ['required', Password::min(10)->mixedCase()->numbers()],
+            'password' => ['required', Password::defaults()],
             'role' => ['required', Rule::in($this->assignable())],
             'offices' => 'array',
             'offices.*' => Rule::exists('offices', 'id')->where('tenant_id', $request->user()->tenant_id),
