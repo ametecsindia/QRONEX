@@ -85,6 +85,7 @@ Route::prefix('super')->name('admin.')->middleware(['auth', EnsureRole::class.':
         Route::post('system/jobs/{uuid}/forget', [Admin\SystemController::class, 'forget'])->name('system.forget');
         Route::get('messaging/{template}/edit', [Admin\MessagingController::class, 'edit'])->name('messaging.edit');
         Route::put('messaging/{template}', [Admin\MessagingController::class, 'update'])->name('messaging.update');
+        Route::post('messaging/mail', [Admin\MessagingController::class, 'mail'])->name('messaging.mail');
         Route::post('messaging/test', [Admin\MessagingController::class, 'test'])->middleware('throttle:10,1')->name('messaging.test');
     });
     Route::get('plans', [Admin\PlanController::class, 'index'])->name('plans.index');

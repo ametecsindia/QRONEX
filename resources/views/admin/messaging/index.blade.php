@@ -9,9 +9,41 @@
   <x-stat label="SMS failed" :value="number_format($m['failed'] ?? 0)" icon="alert" :tone="($m['failed'] ?? 0) ? 'red' : 'navy'" sub="Gateway errors" :href="route('admin.messaging.index', ['channel' => 'sms', 'status' => 'failed'])" />
 </div>
 <div class="grid lg:grid-cols-2 gap-4">
-  <div class="card text-sm space-y-1"><h2 class="font-semibold text-navy">Email</h2>
-    <div>Mailer: <b>{{ $mail['mailer'] }}</b>@if($mail['mailer'] === 'smtp') · {{ $mail['host'] }}@endif · from {{ $mail['from'] }}</div>
-    @if($mail['mailer'] === 'log')<div class="text-amber-700">MAIL_MAILER=log: emails are written to storage/logs/laravel.log, not sent. Set MAIL_* in .env for real SMTP.</div>@endif</div>
+  <form method="post" action="{{ route('admin.messaging.mail') }}" class="card lg:row-span-2" x-data="{ m: '{{ old('mailer', $mail['mailer']) }}' }">
+    @csrf
+    <fieldset class="space-y-4 min-w-0" @cannot('manage-platform') disabled @endcannot>
+    <div class="flex items-start justify-between gap-3">
+      <div><div class="card-t flex items-center gap-2"><x-icon name="mail" class="w-5 h-5 text-teal" /> Email settings</div>
+        <p class="text-xs text-slate-500 mt-1">Used for activation codes, password resets, invoices and alerts.@unless($mail['saved']) Currently from the server's .env file.@endunless</p></div>
+      <span class="chip whitespace-nowrap {{ $mail['mailer'] === 'smtp' ? 'bg-teal-soft text-teal' : 'bg-amber-100 text-amber-800' }}">{{ $mail['mailer'] === 'smtp' ? 'Sending' : 'Log only' }}</span>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-3">
+      @foreach(['smtp' => ['Send with SMTP', 'Real emails through your mail server'], 'log' => ['Log only', 'Nothing is sent; written to the server log']] as $k => [$t, $sub])
+      <label class="flex gap-3 items-start rounded-xl border p-3 cursor-pointer" :class="m === '{{ $k }}' ? 'border-teal bg-teal-soft/40' : 'border-slate-200'">
+        <input type="radio" name="mailer" value="{{ $k }}" x-model="m" class="mt-1"><span><b class="text-sm text-navy">{{ $t }}</b><span class="block text-xs text-slate-500">{{ $sub }}</span></span>
+      </label>
+      @endforeach
+    </div>
+    <div x-show="m === 'smtp'" class="space-y-3">
+      <div class="grid sm:grid-cols-3 gap-3">
+        <x-field name="host" label="SMTP server" :value="$mail['host']" placeholder="smtp.gmail.com" class="sm:col-span-2" />
+        <x-field name="port" label="Port" type="number" :value="$mail['port']" placeholder="587" />
+      </div>
+      <div><label class="label" for="f-security">Security</label>
+        <select id="f-security" name="security" class="input">@foreach(\App\Support\MailSettings::SECURITY as $k => $l)<option value="{{ $k }}" @selected(old('security', $mail['security']) === $k)>{{ $l }}</option>@endforeach</select></div>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <x-field name="username" label="Username" :value="$mail['username']" autocomplete="off" placeholder="you@yourdomain.com" />
+        <x-field name="password" label="Password" type="password" autocomplete="new-password" :hint="$mail['has_password'] ? 'Saved (encrypted). Leave blank to keep it.' : 'For Gmail / Google Workspace use an App Password.'" />
+      </div>
+      @if($mail['has_password'])<label class="flex items-center gap-2 text-xs text-slate-600"><input type="checkbox" name="clear_password" value="1"> Remove the saved password</label>@endif
+    </div>
+    <div class="grid sm:grid-cols-2 gap-3">
+      <x-field name="from_address" label="From email" type="email" :value="$mail['from_address']" required placeholder="no-reply@qronex.app" />
+      <x-field name="from_name" label="From name" :value="$mail['from_name']" required placeholder="QRONEX" />
+    </div>
+    @can('manage-platform')<div class="flex items-center gap-3"><button class="btn">Save email settings</button><span class="text-xs text-slate-500">Then send a test below.</span></div>@endcan
+    </fieldset>
+  </form>
   <div class="card text-sm space-y-1"><h2 class="font-semibold text-navy">SMS</h2>
     <div>Driver: <b>{{ $sms['driver'] }}</b> · sender {{ $sms['sender'] }}@if($sms['url']) · {{ parse_url($sms['url'], PHP_URL_HOST) }}@endif</div>
     @if($sms['driver'] !== 'http')<div class="text-amber-700">SMS_DRIVER=log: SMS are logged below, not sent. A DLT-registered gateway is needed (open founder decision).</div>@endif</div>

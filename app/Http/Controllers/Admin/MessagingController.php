@@ -19,7 +19,7 @@ class MessagingController extends Controller
                 ->latest('created_at')->take(50)->get(),
             'week' => MessageLog::where('created_at', '>=', now()->subDays(7))->selectRaw('channel, status, count(*) c')->groupBy('channel', 'status')->get()
                 ->groupBy('channel')->map(fn ($g) => $g->pluck('c', 'status')),
-            'mail' => ['mailer' => config('mail.default'), 'host' => config('mail.mailers.smtp.host'), 'from' => config('mail.from.address')],
+            'mail' => \App\Support\MailSettings::current() + ['saved' => \App\Support\MailSettings::saved() !== null, 'has_password' => ! empty(\App\Support\MailSettings::saved()['password'] ?? null)],
             'sms' => ['driver' => config('qronex.sms.driver'), 'sender' => config('qronex.sms.sender'), 'url' => config('qronex.sms.url')],
         ]);
     }
@@ -40,6 +40,29 @@ class MessagingController extends Controller
         AuditLog::record('template.updated', "{$template->channel}:{$template->key}");
 
         return redirect()->route('admin.messaging.index')->with('ok', "Template “{$template->name}” saved.");
+    }
+
+    /** Outgoing email (SMTP). A blank password keeps the saved one. */
+    public function mail(Request $request)
+    {
+        $d = $request->validate([
+            'mailer' => 'required|in:smtp,log',
+            'host' => 'required_if:mailer,smtp|nullable|string|max:190',
+            'port' => 'required_if:mailer,smtp|nullable|integer|between:1,65535',
+            'security' => 'required|in:'.implode(',', array_keys(\App\Support\MailSettings::SECURITY)),
+            'username' => 'nullable|string|max:190',
+            'password' => 'nullable|string|max:190',
+            'from_address' => 'required|email|max:190',
+            'from_name' => 'required|string|max:100',
+        ], ['host.required_if' => 'Enter the SMTP server, e.g. smtp.gmail.com.', 'port.required_if' => 'Enter the SMTP port, e.g. 587.']);
+
+        $old = \App\Support\MailSettings::saved() ?? [];
+        $d['password'] = filled($d['password'] ?? null) ? \Illuminate\Support\Facades\Crypt::encryptString($d['password'])
+            : ($request->boolean('clear_password') ? null : ($old['password'] ?? null));
+        \App\Models\PlatformSetting::put(\App\Support\MailSettings::KEY, $d);
+        AuditLog::record('platform.mail', $d['host'] ?? $d['mailer'], collect($d)->except('password')->all());
+
+        return back()->with('ok', $d['mailer'] === 'smtp' ? 'Email settings saved. Send a test below to check them.' : 'Email settings saved. Emails are logged, not sent.');
     }
 
     public function test(Request $request)
