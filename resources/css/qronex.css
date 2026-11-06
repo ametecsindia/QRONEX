@@ -61,8 +61,14 @@
   .ring-tick{animation:qx-ring 3s linear infinite;transform-origin:50% 50%;transform:rotate(-90deg)}
   .punch-in{animation:qx-punch .6s cubic-bezier(.2,.9,.3,1.2) 3.2s both}
   .scanline{animation:qx-scan 3s ease-in-out infinite}
+  .hs-ring{animation:qx-ring 3s linear infinite;transform-origin:50% 50%;transform:rotate(-90deg)}
+  .hs-beam{transition:opacity .4s;animation:hs-beam 1.3s ease-in-out infinite}
+  .hs-phone{animation:hs-float 6s ease-in-out infinite}
+  .hs-card{animation:hs-float 7s ease-in-out infinite reverse}
+  .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+  .js .reveal.in{opacity:1;transform:none}
   .qx-pop{animation:qx-punch .5s cubic-bezier(.2,.9,.3,1.3) both}
-  @media (prefers-reduced-motion: reduce){.ring-tick,.punch-in,.scanline,.qx-pop{animation:none}}
+  @media (prefers-reduced-motion: reduce){.ring-tick,.punch-in,.scanline,.qx-pop,.hs-ring,.hs-beam,.hs-phone,.hs-card,.reveal{animation:none!important;transition:none!important;opacity:1!important;transform:none!important}}
 }
 @keyframes qx-ring{from{stroke-dashoffset:0}to{stroke-dashoffset:302}}
 @keyframes qx-punch{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
@@ -71,3 +77,5 @@
 @keyframes qx-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes qx-grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes qx-load{from{width:0}to{width:90%}}
+@keyframes hs-beam{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes hs-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}

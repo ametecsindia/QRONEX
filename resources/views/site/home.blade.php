@@ -4,8 +4,10 @@
 
 {{-- HERO: the product's own artefact — a live entrance display that rotates every 3 s --}}
 <section class="relative overflow-hidden bg-ink text-white">
-  <div aria-hidden="true" class="absolute inset-0 opacity-[.07]" style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:44px 44px"></div>
-  <div class="site-wrap relative grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center py-16 sm:py-24">
+  <div aria-hidden="true" class="absolute inset-0 opacity-[.06]" style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse at 70% 40%,#000,transparent 70%)"></div>
+  <div aria-hidden="true" class="absolute -right-40 -top-40 h-[620px] w-[620px] rounded-full bg-teal-2/20 blur-[120px]"></div>
+  <div aria-hidden="true" class="absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-navy-3/40 blur-[110px]"></div>
+  <div class="site-wrap relative grid lg:grid-cols-[1fr_1.05fr] gap-10 lg:gap-14 items-center py-12 sm:py-20">
     <div>
       <p class="text-teal-glow font-semibold">For offices, branches and field teams across India</p>
       <h1 class="mt-4 text-[2.6rem] sm:text-6xl lg:text-[4.4rem] leading-[.98] font-extrabold tracking-tightest !text-white">{{ $cms['hero_title'] }}</h1>
@@ -14,46 +16,21 @@
         <a class="site-btn" href="{{ route('register') }}">Start your free trial</a>
         <a class="site-btn-line text-white" href="#app">See how a punch works</a>
       </div>
-      <dl class="mt-12 grid grid-cols-3 max-w-md gap-6 border-t border-white/15 pt-6">
+      <dl class="mt-12 hidden sm:grid grid-cols-3 max-w-md gap-6 border-t border-white/15 pt-6">
         <div><dt class="text-sm text-slate-400">New code every</dt><dd class="num text-3xl font-extrabold">3 s</dd></div>
         <div><dt class="text-sm text-slate-400">Server checks</dt><dd class="num text-3xl font-extrabold">11</dd></div>
         <div><dt class="text-sm text-slate-400">Hardware needed</dt><dd class="text-3xl font-extrabold">None</dd></div>
       </dl>
     </div>
 
-    <div class="relative mx-auto w-full max-w-[460px] mb-20" x-data="liveQr()" x-init="start()">
-      <div class="rounded-[28px] bg-white text-navy p-7 shadow-[0_40px_80px_-30px_rgba(0,0,0,.6)]">
-        <div class="flex items-center justify-between text-sm">
-          <div><div class="font-bold">Hyderabad HQ</div><div class="text-slate-500">Main entrance</div></div>
-          <span class="inline-flex items-center gap-1.5 text-teal font-semibold"><span class="h-2 w-2 rounded-full bg-teal-2 animate-pulse"></span>Live</span>
-        </div>
-        <div class="relative mx-auto mt-6 w-[248px] h-[248px]">
-          <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full" aria-hidden="true">
-            <circle cx="50" cy="50" r="48" fill="none" stroke="#E2E8F0" stroke-width="1.6"/>
-            <circle x-ref="ring" class="ring-tick" cx="50" cy="50" r="48" fill="none" stroke="#F2B33D" stroke-width="1.6" stroke-dasharray="302" stroke-linecap="round"/>
-          </svg>
-          <div class="absolute inset-[34px] rounded-lg overflow-hidden bg-white">
-            <div x-ref="qr" class="w-full h-full [&_img]:w-full [&_img]:h-full [&_canvas]:w-full [&_canvas]:h-full" role="img" aria-label="Rotating attendance QR code (demo)"></div>
-            <div class="scanline absolute left-2 right-2 h-0.5 bg-teal-2/70 shadow-[0_0_12px_#14B8A6]"></div>
-          </div>
-        </div>
-        <div class="mt-5 flex items-center justify-between text-sm text-slate-500"><span>Scan with the QRONEX app</span><span class="num">Code <b class="text-navy" x-text="serial"></b></span></div>
-      </div>
-      <div class="punch-in absolute left-4 sm:-left-10 -bottom-16 w-[250px] rounded-2xl bg-navy text-white p-4 shadow-2xl ring-1 ring-white/10">
-        <div class="flex items-center gap-3">
-          <span class="h-9 w-9 rounded-full bg-teal-2 text-ink flex items-center justify-center"><x-icon name="check" class="w-5 h-5" /></span>
-          <div><div class="font-bold">IN recorded</div><div class="num text-sm text-slate-300">09:02:14 · Priya Reddy</div></div>
-        </div>
-        <div class="mt-3 text-xs text-teal-glow">All 11 checks passed, 14 m from the door</div>
-      </div>
-    </div>
+    @include('site._hero-scene')
   </div>
 </section>
 
 {{-- WHY --}}
 <section class="py-20 sm:py-28">
   <div class="site-wrap grid lg:grid-cols-[1fr_1.4fr] gap-12">
-    <h2 class="site-h2">Biometric machines break. Buddy punching costs money. QRONEX removes both.</h2>
+    <h2 class="reveal site-h2">Biometric machines break. Buddy punching costs money. QRONEX removes both.</h2>
     <div class="grid sm:grid-cols-3 gap-8">
       @foreach([['qr', 'No machine to buy', 'Any tablet, TV or laptop at the door shows the code. Nothing to install, nothing to repair.'], ['phone', 'One phone per person', 'Each employee punches only from the phone you approved. A copied code or login does nothing.'], ['building', 'Every branch, one view', 'Each office has its own gates and geofence. Head office sees everyone; managers see their branch.']] as [$ic, $t, $d])
         <div><span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-teal-soft text-teal"><x-icon :name="$ic" class="w-6 h-6" /></span><h3 class="mt-4 text-lg font-bold">{{ $t }}</h3><p class="mt-2 text-slate-600 leading-relaxed">{{ $d }}</p></div>
@@ -66,7 +43,7 @@
 <section id="security" class="bg-paper py-20 sm:py-28">
   <div class="site-wrap grid lg:grid-cols-[1fr_1.2fr] gap-14 items-start">
     <div class="lg:sticky lg:top-28">
-      <h2 class="site-h2">Every punch passes 11 checks before it counts.</h2>
+      <h2 class="reveal site-h2">Every punch passes 11 checks before it counts.</h2>
       <p class="site-lede mt-5">The phone sends the scanned code, its location and a signature from a key locked inside the phone. The server decides in under half a second, and the employee sees exactly which check failed.</p>
       <p class="mt-6 text-sm text-slate-500 max-w-md">These checks make proxy attendance much harder and record every suspicious attempt with a reason. They cannot prove with certainty that a person stood at the door, so every rejection is kept for review.</p>
     </div>
@@ -97,7 +74,7 @@
   <div class="site-wrap relative">
     <div class="max-w-3xl">
       <p class="text-teal-glow font-semibold">The real product, not a mock-up</p>
-      <h2 class="site-h2 !text-white mt-2">From sign-up to the first punch in one afternoon.</h2>
+      <h2 class="reveal site-h2 !text-white mt-2">From sign-up to the first punch in one afternoon.</h2>
       <p class="mt-4 text-lg text-slate-300 leading-relaxed">These are live QRONEX screens with demo data. Everything happens in the browser; the only thing at the door is a screen.</p>
     </div>
 
@@ -160,7 +137,7 @@
   <div class="site-wrap grid lg:grid-cols-[1fr_auto] gap-14 items-center">
     <div>
       <p class="text-teal font-semibold">What your employee sees</p>
-      <h2 class="site-h2 mt-2">One tap at the door. Verified in under two seconds.</h2>
+      <h2 class="reveal site-h2 mt-2">One tap at the door. Verified in under two seconds.</h2>
       <p class="site-lede mt-4">This is the QRONEX app, running a real punch. Tap any step to see it.</p>
       <ol class="mt-10 space-y-2" role="tablist" aria-label="Punch steps">
         <template x-for="(st, k) in steps" :key="k">
@@ -279,11 +256,51 @@
   </div>
 </section>
 
+{{-- WHAT HR SEES: real Client Admin screens (demo data) --}}
+@php($consoleTabs = [
+  ['Live dashboard', 'admin-dashboard', '/stormfinancial', ['Who is in, on time, late or not in yet, office by office', '14-day attendance trend and arrival times', 'Rejected scans grouped by reason, so problems surface early']],
+  ['Phones & approvals', 'admin-device', '/stormfinancial/devices/1', ['One approved phone per employee; approve with the match code shown on it', 'Full history: registered, approved, replaced, revoked, with who and when', 'Every punch made from that phone, and whether its requests are signed']],
+  ['Employee record', 'admin-employee', '/stormfinancial/employees/1', ['30-day summary: days present, late days, average arrival and hours', 'Day-by-day first IN, last OUT and hours worked', 'Their phones, remote permissions and any rejected scans in one place']],
+])
+<section id="admin" class="py-20 sm:py-28" x-data="{t:0}">
+  <div class="site-wrap">
+    <div class="reveal grid lg:grid-cols-[1fr_auto] gap-6 items-end">
+      <div><p class="text-teal font-semibold">What HR and admins see</p><h2 class="reveal site-h2 mt-2">One console for every office, phone and punch.</h2></div>
+      <div class="flex flex-wrap gap-2" role="tablist" aria-label="Admin console screens">
+        @foreach($consoleTabs as $k => [$label])
+          <button type="button" role="tab" :aria-selected="t === {{ $k }}" @click="t = {{ $k }}" class="rounded-full px-4 py-2 text-sm font-semibold transition" :class="t === {{ $k }} ? 'bg-navy text-white' : 'bg-paper text-navy hover:bg-slate-200'">{{ $label }}</button>
+        @endforeach
+      </div>
+    </div>
+    <div class="reveal mt-10 grid lg:grid-cols-[1fr_300px] gap-8 items-start">
+      <div class="rounded-2xl bg-white ring-1 ring-slate-200 shadow-[0_40px_80px_-40px_rgba(14,39,71,.45)] overflow-hidden">
+        <div class="flex items-center gap-3 border-b border-slate-200 bg-paper px-4 py-2.5">
+          <span class="flex gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-slate-300"></span><span class="h-2.5 w-2.5 rounded-full bg-slate-300"></span><span class="h-2.5 w-2.5 rounded-full bg-slate-300"></span></span>
+          <span class="flex-1 truncate rounded-md bg-white px-3 py-1 text-xs text-slate-500 ring-1 ring-slate-200">🔒 qronex.app<span class="text-navy">@foreach($consoleTabs as $k => $c)<span x-show="t === {{ $k }}">{{ $c[2] }}</span>@endforeach</span></span>
+        </div>
+        <div class="relative aspect-[16/10] bg-paper">
+          @foreach($consoleTabs as $k => [$label, $img])
+            <img src="{{ asset('images/demo/'.$img.'.webp') }}" alt="QRONEX Client Admin — {{ $label }} (demo data)" width="1200" height="750" loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-opacity duration-500" :class="t === {{ $k }} ? 'opacity-100' : 'opacity-0'">
+          @endforeach
+        </div>
+      </div>
+      <div>
+        @foreach($consoleTabs as $k => [$label, $img, $url, $points])
+          <ul x-show="t === {{ $k }}" @if($k) x-cloak @endif class="space-y-5">
+            @foreach($points as $pt)<li class="flex gap-3"><span class="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-teal-soft text-teal"><x-icon name="check" class="w-3.5 h-3.5" /></span><span class="text-slate-700 leading-relaxed">{{ $pt }}</span></li>@endforeach
+          </ul>
+        @endforeach
+        <p class="mt-8 text-sm text-slate-500">Real screens from the QRONEX Client Admin with demo data. Roles decide who sees what: owners, administrators, office managers and approvers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 {{-- WHO IT'S FOR: one interactive selector instead of 8 identical cards --}}
 <section class="bg-navy text-white py-20 sm:py-28" x-data="{i:0}">
   <div class="site-wrap grid lg:grid-cols-[1fr_1.3fr] gap-12 items-center">
     <div>
-      <h2 class="site-h2 !text-white">Built for teams that clock in at a door.</h2>
+      <h2 class="reveal site-h2 !text-white">Built for teams that clock in at a door.</h2>
       <div class="mt-8 flex flex-wrap gap-2" role="tablist">
         @foreach(\App\Http\Controllers\SiteController::INDUSTRIES as $k => [$t])
           <button role="tab" :aria-selected="i === {{ $k }}" @click="i={{ $k }}" class="rounded-full px-4 py-2 text-sm font-semibold transition" :class="i === {{ $k }} ? 'bg-white text-navy' : 'bg-white/10 text-white hover:bg-white/20'">{{ $t }}</button>
@@ -305,7 +322,7 @@
 {{-- FEATURES grouped by job --}}
 <section id="features" class="py-20 sm:py-28">
   <div class="site-wrap">
-    <h2 class="site-h2">Capture, verify, deliver. Nothing else to buy.</h2>
+    <h2 class="reveal site-h2">Capture, verify, deliver. Nothing else to buy.</h2>
     <p class="site-lede mt-4">QRONEX records attendance and hands it to the software you already run. It does not do payroll, leave or productivity tracking.</p>
     @php($f = collect(\App\Http\Controllers\SiteController::FEATURES))
     <div class="mt-14 grid lg:grid-cols-3 gap-10">
@@ -325,7 +342,7 @@
 <section class="bg-paper py-20">
   <div class="site-wrap grid lg:grid-cols-2 gap-12 items-center">
     <div>
-      <h2 class="site-h2">Attendance flows straight into your HRMS.</h2>
+      <h2 class="reveal site-h2">Attendance flows straight into your HRMS.</h2>
       <p class="site-lede mt-4">Read verified punches over the REST API, or receive a signed webhook the moment one is accepted. Integration keys can read attendance but can never create a punch.</p>
       <a class="site-btn mt-8" href="{{ route('docs.api') }}">Read the API reference</a>
     </div>
@@ -347,7 +364,7 @@ X-Qronex-Signature: t=1762313534,v1=9f2c…
 <section class="py-20 sm:py-28">
   <div class="site-wrap">
     <div class="flex flex-wrap items-end justify-between gap-6">
-      <div><h2 class="site-h2">Pay per employee. Monthly, quarterly or yearly.</h2><p class="site-lede mt-4">Every plan starts with a free trial. Prices exclude GST.</p></div>
+      <div><h2 class="reveal site-h2">Pay per employee. Monthly, quarterly or yearly.</h2><p class="site-lede mt-4">Every plan starts with a free trial. Prices exclude GST.</p></div>
       <a class="site-btn-line text-navy" href="{{ route('pricing') }}">Work out your price</a>
     </div>
     <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-start">
@@ -372,7 +389,7 @@ X-Qronex-Signature: t=1762313534,v1=9f2c…
 {{-- FAQ --}}
 <section id="faq" class="bg-paper py-20 sm:py-28">
   <div class="site-wrap grid lg:grid-cols-[1fr_1.6fr] gap-12">
-    <div><h2 class="site-h2">Questions operations teams ask us.</h2><p class="site-lede mt-4">Something else? <a class="text-teal font-semibold underline underline-offset-4" href="{{ route('contact') }}">Ask us directly</a>.</p></div>
+    <div><h2 class="reveal site-h2">Questions operations teams ask us.</h2><p class="site-lede mt-4">Something else? <a class="text-teal font-semibold underline underline-offset-4" href="{{ route('contact') }}">Ask us directly</a>.</p></div>
     <div class="divide-y divide-slate-200 border-y border-slate-200">
       @foreach(\App\Http\Controllers\SiteController::faqs() as [$q, $a])
         <details class="group py-5">
@@ -381,6 +398,27 @@ X-Qronex-Signature: t=1762313534,v1=9f2c…
         </details>
       @endforeach
     </div>
+  </div>
+</section>
+
+{{-- SUPPORT & CONTACT --}}
+<section class="py-20 sm:py-24">
+  <div class="site-wrap">
+    <h2 class="reveal site-h2">Talk to the team that builds it.</h2>
+    <div class="reveal mt-10 grid md:grid-cols-3 gap-5">
+      @foreach([
+        ['chat', 'Sales and demos', 'Pricing for many sites, a walkthrough with your own offices, or a pilot for one branch.', route('contact'), 'Contact sales'],
+        ['help', 'Customer support', 'Signed-in customers raise tickets from Help & support in the console and follow every reply there.', route('login'), 'Sign in for support'],
+        ['code', 'Integration help', 'REST API, webhooks and the OpenAPI file, with guides for payroll and HRMS sync.', route('docs.api'), 'Open the API reference'],
+      ] as [$ic, $t, $d, $href, $cta])
+        <a href="{{ $href }}" class="group rounded-3xl border border-slate-200 p-7 transition hover:-translate-y-1 hover:border-teal/40 hover:shadow-[0_30px_60px_-30px_rgba(14,39,71,.35)]">
+          <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-teal-soft text-teal"><x-icon :name="$ic" class="w-6 h-6" /></span>
+          <h3 class="mt-5 text-lg font-bold text-navy">{{ $t }}</h3><p class="mt-2 text-slate-600 leading-relaxed">{{ $d }}</p>
+          <span class="mt-5 inline-flex items-center gap-1 font-semibold text-teal">{{ $cta }} <span class="transition group-hover:translate-x-1">→</span></span>
+        </a>
+      @endforeach
+    </div>
+    <p class="reveal mt-8 text-slate-500">Email <a class="font-semibold text-navy underline underline-offset-4" href="mailto:{{ config('qronex.supplier.email') }}">{{ config('qronex.supplier.email') }}</a> · Ametecs India Private Limited, Kondapur, Hyderabad</p>
   </div>
 </section>
 
@@ -396,21 +434,24 @@ X-Qronex-Signature: t=1762313534,v1=9f2c…
 @push('scripts')
 <script src="{{ asset('vendor/qrcode.min.js') }}"></script>
 <script>
-  // Demo only: random codes shaped like the real rotating token. The real display gets signed codes from the server.
-  function liveQr() {
+  // Hero scene. Demo only: random codes shaped like the real rotating token (the real display gets signed codes from the server).
+  function heroScene() {
     return {
-      serial: '',
+      phase: 'scan', serial: '',
       draw() {
         const rnd = Array.from(crypto.getRandomValues(new Uint8Array(10)), b => b.toString(16).padStart(2, '0')).join('');
-        const win = Math.floor(Date.now() / 3000);
+        const win = Math.floor(Date.now() / 3000), text = 'QRX1.demo.3.' + win + '.' + rnd;
         this.serial = String(win).slice(-4);
-        this.$refs.qr.innerHTML = '';
-        new QRCode(this.$refs.qr, { text: 'QRX1.demo.3.' + win + '.' + rnd, width: 180, height: 180, colorDark: '#0E2747', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
-        const r = this.$refs.ring; r.style.animation = 'none'; void r.getBoundingClientRect(); r.style.animation = '';
+        for (const [ref, px] of [['kq', 120], ['pq', 90]]) { this.$refs[ref].innerHTML = ''; new QRCode(this.$refs[ref], { text, width: px, height: px, colorDark: '#0E2747', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); }
       },
-      start() { this.draw(); setInterval(() => this.draw(), 3000); },
+      start() {
+        this.draw(); setInterval(() => this.phase !== 'ok' && this.draw(), 3000);
+        const loop = () => { this.phase = 'scan'; setTimeout(() => this.phase = 'lock', 2600); setTimeout(() => this.phase = 'ok', 3400); setTimeout(loop, 7600); };
+        loop();
+      },
     };
   }
+
   // Demo only: plays one punch through the app's screens. Timings roughly match a real scan.
   function phoneDemo() {
     const steps = [
