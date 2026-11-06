@@ -35,7 +35,8 @@
     <a href="{{ route('register') }}" class="site-btn">Start free trial</a>
   </nav>
 </header>
-<main>@if(session('ok') || $errors->any())<div class="site-wrap pt-6">@include('components.flash')</div>@endif @yield('content')</main>
+{{-- Site pages show field errors inline; only the success toast comes from the flash component. --}}
+<main>@if(session('ok'))@include('components.flash')@endif @yield('content')</main>
 <footer class="bg-ink text-slate-400">
   <div class="site-wrap py-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] text-[15px]">
     <div class="space-y-3">

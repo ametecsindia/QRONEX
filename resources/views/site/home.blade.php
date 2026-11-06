@@ -319,21 +319,70 @@
   </div>
 </section>
 
-{{-- FEATURES grouped by job --}}
-<section id="features" class="py-20 sm:py-28">
-  <div class="site-wrap">
-    <h2 class="reveal site-h2">Capture, verify, deliver. Nothing else to buy.</h2>
-    <p class="site-lede mt-4">QRONEX records attendance and hands it to the software you already run. It does not do payroll, leave or productivity tracking.</p>
+{{-- FEATURES: the three jobs QRONEX does, as one pipeline. Each stage has a small live visual. --}}
+<section id="features" class="relative py-20 sm:py-28 overflow-hidden">
+  <div aria-hidden="true" class="absolute inset-x-0 top-0 h-[420px] bg-gradient-to-b from-paper to-white"></div>
+  <div class="site-wrap relative">
+    <div class="reveal max-w-3xl">
+      <p class="text-teal font-semibold">Everything in one platform</p>
+      <h2 class="site-h2 mt-2">Capture, verify, deliver. Nothing else to buy.</h2>
+      <p class="site-lede mt-4">QRONEX records attendance and hands it to the software you already run. It does not do payroll, leave or productivity tracking.</p>
+    </div>
     @php($f = collect(\App\Http\Controllers\SiteController::FEATURES))
-    <div class="mt-14 grid lg:grid-cols-3 gap-10">
-      @foreach([['Capture', 'qr', [0, 1, 5, 6, 7]], ['Verify', 'shield', [2, 3, 4, 14]], ['Deliver', 'code', [8, 9, 10, 11, 12, 13]]] as [$g, $ic, $idx])
-        <div>
-          <div class="flex items-center gap-3"><span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-navy text-white"><x-icon :name="$ic" /></span><h3 class="text-xl font-extrabold">{{ $g }}</h3></div>
-          <ul class="mt-6 space-y-5">
-            @foreach($idx as $n)<li><div class="font-semibold text-navy">{{ $f[$n][0] }}</div><div class="text-slate-600">{{ $f[$n][1] }}</div></li>@endforeach
-          </ul>
-        </div>
-      @endforeach
+    @php($stages = [
+      ['01', 'Capture', 'At the door', 'qr', [[0, 'qr'], [1, 'clock'], [5, 'building'], [6, 'window'], [7, 'home']]],
+      ['02', 'Verify', 'On the server', 'shield', [[2, 'globe'], [3, 'phone'], [4, 'users'], [14, 'list']]],
+      ['03', 'Deliver', 'To your team and systems', 'code', [[8, 'chart'], [9, 'inbox'], [10, 'code'], [11, 'server'], [12, 'cog'], [13, 'card']]],
+    ])
+    <div class="relative mt-14">
+      {{-- connector with a travelling punch (desktop) --}}
+      <div aria-hidden="true" class="hidden lg:block absolute left-[16%] right-[16%] top-[118px] h-px bg-gradient-to-r from-teal/0 via-teal/40 to-teal/0">
+        <span class="feat-dot absolute -top-[5px] h-[11px] w-[11px] rounded-full bg-teal-2 shadow-[0_0_14px_#14B8A6]"></span>
+      </div>
+      <div class="grid lg:grid-cols-3 gap-6">
+        @foreach($stages as $si => [$no, $name, $where, $ic, $items])
+          <article class="reveal group relative flex flex-col rounded-3xl bg-white ring-1 ring-slate-200 p-6 sm:p-7 transition duration-300 hover:-translate-y-1 hover:ring-teal/40 hover:shadow-[0_40px_70px_-40px_rgba(14,39,71,.45)]" style="transition-delay:{{ $si * 90 }}ms">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-navy text-white"><x-icon :name="$ic" /></span>
+              <div><div class="num text-xs font-bold text-teal">{{ $no }} · {{ $where }}</div><h3 class="text-xl font-extrabold text-navy">{{ $name }}</h3></div>
+            </div>
+
+            {{-- live visual --}}
+            <div class="relative mt-6 h-36 overflow-hidden rounded-2xl bg-ink" aria-hidden="true">
+              <div class="absolute inset-0 opacity-[.07]" style="background-image:radial-gradient(#fff 1px,transparent 1px);background-size:16px 16px"></div>
+              @if($si === 0)
+                <div class="absolute inset-0 flex items-center justify-center gap-5" x-data="{ s: '' }" x-init="const d = () => { $refs.q.innerHTML = ''; new QRCode($refs.q, { text: 'QRX1.demo.' + Date.now(), width: 84, height: 84, colorDark: '#0E2747', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.L }); s = String(Math.floor(Date.now() / 3000)).slice(-4) }; d(); setInterval(d, 3000)">
+                  <div class="relative rounded-xl bg-white p-2 shadow-lg"><div x-ref="q" class="h-[84px] w-[84px] [&_img]:w-full [&_canvas]:w-full"></div><span class="scanline absolute left-2 right-2 h-0.5 bg-teal-2/80 shadow-[0_0_10px_#14B8A6]"></span></div>
+                  <div class="text-white"><div class="text-[11px] text-slate-400">Main entrance</div><div class="num text-2xl font-extrabold" x-text="s"></div><div class="mt-1 h-1 w-20 overflow-hidden rounded bg-white/15"><div class="feat-bar h-full bg-scan"></div></div><div class="mt-1 text-[11px] text-slate-400">new code every 3 s</div></div>
+                </div>
+              @elseif($si === 1)
+                <ul class="absolute inset-0 flex flex-col justify-center gap-2 px-5 text-[13px] text-white">
+                  @foreach(['Signed by the approved phone', 'Code fresh for this gate', 'Inside the geofence · 14 m'] as $k => $t)
+                    <li class="feat-check flex items-center gap-2 whitespace-nowrap rounded-lg bg-white/5 px-3 py-1.5 ring-1 ring-white/10" style="animation-delay:{{ $k * .5 }}s"><span class="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-teal-2 text-[10px] font-bold text-ink">✓</span>{{ $t }}</li>
+                  @endforeach
+                </ul>
+              @else
+                <div class="absolute inset-0 flex items-center gap-3 px-5">
+                  <div class="feat-event shrink-0 whitespace-nowrap rounded-lg bg-teal-2 px-2.5 py-1.5 font-mono text-[11px] font-bold text-ink shadow-[0_0_18px_rgba(20,184,166,.5)]">attendance.created</div>
+                  <div class="h-px flex-1 bg-gradient-to-r from-teal-2/70 to-white/10"></div>
+                  <div class="flex flex-col gap-1.5 text-[11px] font-semibold">
+                    @foreach(['HRMS webhook', 'Payroll API', 'Excel / CSV'] as $k => $t)<span class="feat-target whitespace-nowrap rounded-md bg-white/10 px-2.5 py-1 text-white ring-1 ring-white/10" style="animation-delay:{{ .6 + $k * .35 }}s">{{ $t }}</span>@endforeach
+                  </div>
+                </div>
+              @endif
+            </div>
+
+            <ul class="mt-6 space-y-4">
+              @foreach($items as [$n, $fic])
+                <li class="flex gap-3">
+                  <span class="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-soft text-teal"><x-icon :name="$fic" class="w-4 h-4" /></span>
+                  <div><div class="font-semibold text-navy">{{ $f[$n][0] }}</div><div class="text-sm text-slate-600 leading-relaxed">{{ $f[$n][1] }}</div></div>
+                </li>
+              @endforeach
+            </ul>
+          </article>
+        @endforeach
+      </div>
     </div>
   </div>
 </section>
@@ -379,7 +428,7 @@ X-Qronex-Signature: t=1762313534,v1=9f2c…
             @else<span class="text-4xl font-extrabold">Custom</span>@endif
           </div>
           <div class="mt-4 text-sm {{ $p->is_popular ? 'text-slate-300' : 'text-slate-600' }}">{{ $p->min_employees }}–{{ $p->max_employees >= 100000 ? 'unlimited' : $p->max_employees }} employees, {{ $v->trial_days }}-day free trial{{ $v->api_included ? ', API included' : '' }}</div>
-          <a class="mt-7 w-full {{ $p->is_popular ? 'site-btn' : 'site-btn-line text-navy' }}" href="{{ $v->pricing_model === 'custom' ? route('contact') : route('register') }}">{{ $v->pricing_model === 'custom' ? 'Talk to sales' : 'Start free trial' }}</a>
+          <a class="mt-7 w-full {{ $p->is_popular ? 'site-btn' : 'site-btn-line text-navy' }}" href="{{ $v->pricing_model === 'custom' ? route('contact', ['topic' => 'pricing']) : route('register') }}">{{ $v->pricing_model === 'custom' ? 'Talk to sales' : 'Start free trial' }}</a>
         </div>
       @endforeach
     </div>
@@ -426,7 +475,7 @@ X-Qronex-Signature: t=1762313534,v1=9f2c…
 <section class="bg-teal text-white">
   <div class="site-wrap py-16 sm:py-20 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
     <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tightest !text-white max-w-[18ch] leading-[1.02]">Put a QR at your door this week.</h2>
-    <div class="flex flex-wrap gap-3"><a class="site-btn !bg-white !text-navy hover:!bg-slate-100" href="{{ route('register') }}">Start free trial</a><a class="site-btn-line text-white" href="{{ route('contact') }}">Book a demo</a></div>
+    <div class="flex flex-wrap gap-3"><a class="site-btn !bg-white !text-navy hover:!bg-slate-100" href="{{ route('register') }}">Start free trial</a><a class="site-btn-line text-white" href="{{ route('contact', ['topic' => 'demo']) }}">Book a demo</a></div>
   </div>
 </section>
 @endsection

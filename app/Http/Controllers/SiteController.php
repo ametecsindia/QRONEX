@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 /** Public website (copy from the Stage 1 prototype). Prices come live from Super Admin → Plans. */
 class SiteController extends Controller
 {
+    public const TOPICS = ['demo' => 'A demo', 'pricing' => 'Pricing', 'integration' => 'Integration', 'other' => 'Something else'];
+
     public const HOW = [['Register your company', 'Sign up online, verify your email and claim your QRONEX address.'], ['Create office locations', 'Add each branch with its address and entrance gates.'], ['Configure geofencing', 'Drop a pin on the map and set the radius employees must be inside.'], ['Add employees', 'Add people one by one or import a CSV from your HRMS.'], ['Approve employee devices', 'Each employee registers one phone. You approve it once.'], ['Open the QR display URL', 'Open the gate link on any tablet, TV or laptop browser at the entrance.'], ['Start attendance', 'Employees scan with the QRONEX app. Each punch is verified on the server.'], ['Download logs or connect APIs', 'Export CSV, or stream events to your HRMS by API and webhook.']];
 
     public const FEATURES = [['Dynamic QR code', 'A new signed code on every rotation; screenshots stop working within seconds.'], ['Configurable 3-second rotation', 'Default 3 s, adjustable within platform security bounds.'], ['GPS geofencing', 'Per-office radius with accuracy thresholds.'], ['Registered mobile devices', 'One approved phone per employee by default.'], ['Employee authentication', 'App sign-in bound to a device credential.'], ['Multiple offices', 'Each office has its own geofence and timezone.'], ['Multiple entrance displays', 'Separate QR per gate, each with its own link.'], ['Remote / WFH approval', 'Date-bound permissions with optional home geofence.'], ['Real-time attendance ledger', 'Every accepted punch gets a unique event ID.'], ['CSV export & reports', 'Daily register, monthly register, remote and adjustment logs.'], ['REST API integration', 'Scoped, tenant-specific keys with rate limits.'], ['Webhook integration', 'Signed event delivery with automatic retries.'], ['Cloud-based administration', 'Nothing to install at the office except a browser.'], ['Subscription management', 'Plans, invoices and GST in one place.'], ['Attendance audit logs', 'Corrections are separate entries; history is never rewritten.']];
@@ -74,10 +76,21 @@ class SiteController extends Controller
         if (filled($request->input('website'))) {
             return back()->with('ok', 'Thanks — we will be in touch.');
         }
-        $d = $request->validate(['name' => 'required|string|max:120', 'email' => 'required|email|max:190', 'phone' => 'nullable|string|max:20',
-            'company' => 'nullable|string|max:150', 'employees' => 'nullable|integer|min:1|max:1000000', 'message' => 'required|string|max:3000']);
+        $d = $request->validate([
+            'topic' => ['nullable', \Illuminate\Validation\Rule::in(array_keys(self::TOPICS))],
+            'name' => 'required|string|max:120', 'email' => 'required|email|max:190',
+            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+()\-\s]{7,20}$/'],
+            'company' => 'nullable|string|max:150', 'employees' => 'nullable|integer|min:1|max:100000', 'message' => 'required|string|max:3000',
+        ], [
+            'employees.integer' => 'Enter your team size as a number, for example 40.',
+            'employees.max' => 'That looks like a phone number. Enter how many employees you have, for example 40.',
+            'employees.min' => 'Enter at least 1 employee.',
+            'phone.regex' => 'Enter a phone number using digits, spaces, + or brackets.',
+            'message.required' => 'Tell us a little about what you need.',
+        ]);
+        $topic = self::TOPICS[$d['topic'] ?? 'other'] ?? 'Other';
         $t = SupportTicket::create(['name' => $d['name'], 'email' => $d['email'], 'phone' => $d['phone'] ?? null, 'area' => 'sales',
-            'subject' => 'Website enquiry'.(isset($d['company']) ? " — {$d['company']}" : '').(isset($d['employees']) ? " · {$d['employees']} employees" : '')]);
+            'subject' => "Website enquiry ({$topic})".(isset($d['company']) ? " — {$d['company']}" : '').(isset($d['employees']) ? " · {$d['employees']} employees" : '')]);
         $t->messages()->create(['body' => $d['message']]);
         HelpController::notifyStaff($t, $d['message']);
 
