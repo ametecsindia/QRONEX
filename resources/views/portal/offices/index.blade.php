@@ -13,13 +13,13 @@
 <div class="card p-0 overflow-hidden"><div id="map" class="h-72"></div></div>
 <div class="grid lg:grid-cols-2 gap-4">
 @foreach($offices as $o)
-  <div class="card space-y-3">
+  <div class="card space-y-3 min-w-0">
     <div class="flex items-start justify-between gap-2">
       <div><h2 class="font-bold text-navy">{{ $o->name }} <span class="text-xs text-slate-500">{{ $o->code }}</span> @unless($o->is_active)<span class="chip bg-slate-200">inactive</span>@endunless</h2>
         <div class="text-xs text-slate-500">{{ $o->address }}, {{ $o->city }} · {{ $o->lat }}, {{ $o->lng }} · radius {{ $o->geofence_radius_m >= 1000 ? number_format($o->geofence_radius_m / 1000).' km' : $o->geofence_radius_m.' m' }} · {{ $o->employees_count }} employees</div></div>
       <a class="btn-ghost btn-sm" href="{{ route('portal.offices.edit', $o) }}">Edit</a>
     </div>
-    <table class="tbl"><tr><th>Gate</th><th>Entrance display</th><th></th></tr>
+    <div class="overflow-x-auto -mx-1 px-1"><table class="tbl"><tr><th>Gate</th><th>Entrance display</th><th></th></tr>
     @foreach($o->gates as $g)
       @php($url = route('display.show', [auth()->user()->tenant->slug, $o->slug, $g->code, 'key' => $g->display_secret]))
       <tr class="{{ $g->is_active ? '' : 'opacity-50' }}"><td>{{ $g->name }} <span class="text-xs text-slate-500">{{ $g->code }}</span>
@@ -31,7 +31,7 @@
         <form method="post" action="{{ route('portal.gates.reset-display', $g) }}" class="inline" onsubmit="return confirm('Reset this display link? Screens using the old link stop showing codes.')">@csrf<button class="btn-ghost btn-sm">Reset link</button></form>
         <form method="post" action="{{ route('portal.gates.toggle', $g) }}" class="inline">@csrf @method('PATCH')<button class="btn-ghost btn-sm">{{ $g->is_active ? 'Disable' : 'Enable' }}</button></form></td></tr>
     @endforeach
-    </table>
+    </table></div>
     <form method="post" action="{{ route('portal.offices.gates.store', $o) }}" class="flex flex-wrap gap-2 items-end">
       @csrf <input name="code" class="input max-w-[8rem]" placeholder="gate2" required><input name="name" class="input max-w-[14rem]" placeholder="Gate name" required><button class="btn-ghost btn-sm">Add gate</button>
     </form>

@@ -7,7 +7,7 @@
   @page{size:A4;margin:12mm}
   body{font-family:system-ui,"Segoe UI",Roboto,sans-serif;color:#1e293b;max-width:800px;margin:24px auto;padding:0 16px;font-size:14px}
   .band{background:#0E2747;color:#fff;padding:16px 20px;border-radius:8px;display:flex;justify-content:space-between;align-items:center}
-  .logo{background:#fff;border-radius:6px;padding:4px 10px}.logo img{height:32px}
+  .logo{background:#fff;border-radius:6px;padding:4px 10px}.logo{display:inline-flex;align-items:center;gap:.5em}.logo .qx-mark{height:32px;width:32px}
   h1{margin:0;font-size:20px}.muted{color:#64748b}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
   .card{border:1px solid #e2e8f0;border-radius:8px;padding:12px}
@@ -20,7 +20,7 @@
 <div class="noprint"><button onclick="print()">Print / Save as PDF</button></div>
 <div class="band">
   <div><h1>Tax Invoice</h1><div>{{ $invoice->number }} · {{ $invoice->issued_on->format('d M Y') }}</div></div>
-  <span class="logo"><img src="{{ asset('images/qronex-logo.png') }}" alt="QRONEX" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:'QRONEX',style:'color:#0E2747'}))"></span>
+  <span class="logo"><svg viewBox="0 0 32 32" class="qx-mark" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0E2747"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="18" y="6" width="8" height="8" rx="1.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="6" y="18" width="8" height="8" rx="1.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="22" cy="22" r="3.2" fill="#14B8A6"/></svg><b style="color:#0E2747;letter-spacing:-.01em">QRONEX</b></span>
 </div>
 <div class="grid">
   <div class="card"><div class="muted">Supplier</div><b>{{ config('qronex.supplier.name') }}</b><br>{{ config('qronex.supplier.address') }}<br>GSTIN: {{ config('qronex.supplier.gstin') }}</div>

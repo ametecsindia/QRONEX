@@ -79,7 +79,7 @@
       <button class="lg:hidden btn-ghost btn-sm" @click="open=true" aria-label="Open menu"><x-icon name="menu" /></button>
       <div class="min-w-0">
         <div class="text-[11px] text-slate-500 flex items-center gap-2">@if($u->isPlatform())<span class="rounded bg-[#0B1220] text-scan font-semibold px-1.5 py-px">SUPER ADMIN</span>@else<span class="rounded bg-teal-soft text-teal font-semibold px-1.5 py-px">CLIENT ADMIN</span>@endif @isset($crumb)<span>{!! $crumb !!}</span>@endisset</div>
-        <h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-navy truncate">{{ $title ?? '' }}</h1>
+        <h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-navy line-clamp-2 md:line-clamp-1 break-words">{{ $title ?? '' }}</h1>
       </div>
       <div class="ml-auto flex flex-wrap items-center gap-2">@yield('actions')</div>
     </header>

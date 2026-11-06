@@ -27,13 +27,39 @@
   </div>
 </section>
 
-{{-- WHY --}}
+{{-- WHY: the old way vs QRONEX, row by row --}}
 <section class="py-20 sm:py-28">
-  <div class="site-wrap grid lg:grid-cols-[1fr_1.4fr] gap-12">
-    <h2 class="reveal site-h2">Biometric machines break. Buddy punching costs money. QRONEX removes both.</h2>
-    <div class="grid sm:grid-cols-3 gap-8">
-      @foreach([['qr', 'No machine to buy', 'Any tablet, TV or laptop at the door shows the code. Nothing to install, nothing to repair.'], ['phone', 'One phone per person', 'Each employee punches only from the phone you approved. A copied code or login does nothing.'], ['building', 'Every branch, one view', 'Each office has its own gates and geofence. Head office sees everyone; managers see their branch.']] as [$ic, $t, $d])
-        <div><span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-teal-soft text-teal"><x-icon :name="$ic" class="w-6 h-6" /></span><h3 class="mt-4 text-lg font-bold">{{ $t }}</h3><p class="mt-2 text-slate-600 leading-relaxed">{{ $d }}</p></div>
+  <div class="site-wrap">
+    <div class="reveal grid lg:grid-cols-[1fr_1fr] gap-6 items-end">
+      <h2 class="site-h2">Biometric machines break. Buddy punching costs money. QRONEX removes both.</h2>
+      <p class="site-lede lg:justify-self-end lg:max-w-md">Swap the device on the wall for a screen at the door and the phones your team already carries.</p>
+    </div>
+
+    @php($rows = [
+      ['cash', 'A machine at every door', 'Buy, install and repair a terminal for each branch and gate.', 'qr', 'Any screen is the terminal', 'A tablet, TV or laptop browser shows the code. Nothing to install, nothing to repair.'],
+      ['users', 'A queue at shift start', 'Everyone touches the same sensor, one at a time.', 'phone', 'Touch-free, from your own phone', 'Each person scans the door code with their own approved phone.'],
+      ['alert', 'Someone punches for a colleague', 'Shared cards, PINs and paper registers are easy to use on someone’s behalf.', 'shield', 'One approved phone per person', 'A copied code or a shared login does nothing; the request must be signed by that person’s phone.'],
+      ['building', 'Data stuck in the device', 'Someone exports it branch by branch before payroll.', 'chart', 'Every branch, live in one view', 'Head office sees everyone the moment they punch; managers see their own branch.'],
+    ])
+    <div class="mt-12 overflow-hidden rounded-3xl ring-1 ring-slate-200">
+      <div class="hidden md:grid grid-cols-[1fr_auto_1fr] bg-paper text-xs font-bold uppercase tracking-wider">
+        <div class="px-5 sm:px-7 py-4 text-slate-500">The old way</div><div class="w-10 sm:w-14"></div><div class="px-5 sm:px-7 py-4 text-teal bg-navy/[.03]">With QRONEX</div>
+      </div>
+      @foreach($rows as $i => [$oi, $ot, $od, $ni, $nt, $nd])
+        <div class="reveal grid md:grid-cols-[1fr_auto_1fr] border-t border-slate-200 first-of-type:border-t-0 md:first-of-type:border-t group" style="transition-delay:{{ $i * 80 }}ms">
+          <div class="flex gap-3 sm:gap-4 px-5 sm:px-7 pt-5 pb-3 md:py-6">
+            <span class="mt-0.5 hidden sm:inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-400"><x-icon :name="$oi" class="w-5 h-5" /></span>
+            <div><div class="md:hidden text-[11px] font-bold uppercase tracking-wider text-slate-400">The old way</div><div class="font-bold text-slate-500">{{ $ot }}</div><p class="mt-1 text-sm text-slate-500 leading-relaxed">{{ $od }}</p></div>
+          </div>
+          <div class="relative h-0 md:h-auto md:w-14 flex items-center justify-center">
+            <span class="absolute hidden md:block inset-y-0 left-1/2 w-px bg-slate-200"></span>
+            <span class="relative z-10 grid h-8 w-8 place-items-center rounded-full bg-white ring-1 ring-slate-200 text-teal transition group-hover:bg-teal group-hover:text-white group-hover:ring-teal"><span class="rotate-90 md:rotate-0">→</span></span>
+          </div>
+          <div class="flex gap-3 sm:gap-4 px-5 sm:px-7 pt-6 pb-5 md:py-6 bg-navy/[.03]">
+            <span class="mt-0.5 hidden sm:inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-soft text-teal"><x-icon :name="$ni" class="w-5 h-5" /></span>
+            <div><div class="md:hidden text-[11px] font-bold uppercase tracking-wider text-teal">With QRONEX</div><div class="font-bold text-navy">{{ $nt }}</div><p class="mt-1 text-sm text-slate-600 leading-relaxed">{{ $nd }}</p></div>
+          </div>
+        </div>
       @endforeach
     </div>
   </div>

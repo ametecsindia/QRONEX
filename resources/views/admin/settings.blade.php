@@ -1,6 +1,7 @@
 @extends('layouts.app', ['title' => 'Platform settings', 'crumb' => 'Platform'])
 @section('content')
 <form method="post" action="{{ route('admin.settings.update') }}" class="space-y-4 max-w-5xl">
+  <fieldset class="contents" @cannot('manage-platform') disabled @endcannot>
   @csrf
   <div class="grid lg:grid-cols-3 gap-4 items-start">
     <div class="card space-y-4"><div><div class="card-t flex items-center gap-2"><x-icon name="qr" class="w-5 h-5 text-teal" /> Rotating QR</div><p class="text-xs text-slate-500 mt-1">Bounds every company's gate interval must stay within.</p></div>
@@ -19,5 +20,6 @@
     </div>
   </div>
   @can('manage-platform')<div class="flex items-center gap-3"><button class="btn">Save settings</button><span class="text-xs text-slate-500">Changes are saved to the audit log.</span></div>@endcan
+  </fieldset>
 </form>
 @endsection

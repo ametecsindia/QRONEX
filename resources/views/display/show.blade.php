@@ -10,7 +10,7 @@
   :root{--navy:#0E2747;--teal:#0A8278}
   *{box-sizing:border-box}html,body{margin:0;height:100%}
   body{background:var(--navy);color:#EAF0F7;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;padding:2vh 16px;text-align:center}
-  .logo{background:#fff;border-radius:12px;padding:8px 16px;display:inline-flex}.logo img{height:clamp(28px,5vh,56px)}.logo b{color:var(--navy);font-size:1.6rem}
+  .logo{background:#fff;border-radius:12px;padding:8px 16px;display:inline-flex}.logo{display:inline-flex;align-items:center;gap:.5em}.logo .qx-mark{height:clamp(28px,5vh,56px);width:clamp(28px,5vh,56px)}.logo b{color:var(--navy);font-size:1.6rem}
   h1{margin:0;font-size:clamp(1.2rem,3.4vh,2.4rem)}.sub{color:#A8B9CF;font-size:clamp(.9rem,2.2vh,1.4rem)}
   #qr{background:#fff;padding:clamp(12px,2.5vh,28px);border-radius:20px;width:min(70vh,86vw);aspect-ratio:1;display:flex;align-items:center;justify-content:center;transition:transform .15s}
   #qr img,#qr canvas{width:100%!important;height:100%!important;image-rendering:pixelated}
@@ -22,7 +22,7 @@
 </style>
 </head>
 <body>
-  <div class="logo"><img src="{{ asset('images/qronex-logo.png') }}" alt="QRONEX" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:'QRONEX'}))"></div>
+  <div class="logo"><svg viewBox="0 0 32 32" class="qx-mark" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0E2747"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="18" y="6" width="8" height="8" rx="1.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="6" y="18" width="8" height="8" rx="1.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="22" cy="22" r="3.2" fill="#14B8A6"/></svg><b style="color:#0E2747;letter-spacing:-.01em">QRONEX</b></div>
   <div><h1>{{ $gate->office->name }} · {{ $gate->name }}</h1><div class="sub">Open the QRONEX app and scan to mark attendance</div></div>
   <div id="qr" role="img" aria-label="Attendance QR code"></div>
   <div class="bar"><i id="bar"></i></div>
