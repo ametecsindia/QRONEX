@@ -5,12 +5,12 @@ Target: one Ubuntu 24.04 LTS VPS (2 vCPU / 4 GB is plenty to start), domain `qro
 
 ## 1. Server packages (once)
 ```bash
-sudo apt update && sudo apt upgrade -y
+sudo apt update          # shared server: skip `apt upgrade` unless planned
 sudo apt install -y nginx mysql-server supervisor git unzip certbot python3-certbot-nginx \
   php8.3-fpm php8.3-cli php8.3-mysql php8.3-mbstring php8.3-xml php8.3-curl php8.3-zip php8.3-bcmath php8.3-intl php8.3-gd
 curl -sS https://getcomposer.org/installer | php && sudo mv composer.phar /usr/local/bin/composer
 sudo timedatectl set-timezone Asia/Kolkata         # server clock (app stores UTC)
-sudo ufw allow OpenSSH && sudo ufw allow 'Nginx Full' && sudo ufw enable
+# Firewall: only if ufw is not already managed on this server — check `sudo ufw status` first
 ```
 
 ## 2. Database (once)
@@ -25,8 +25,8 @@ Create `/root/.my.cnf` with `[client] user=qronex password=<same>` (chmod 600) f
 ## 3. Code (once)
 Repo: https://github.com/ametecsindia/QRONEX (public: never commit `.env`). Then:
 ```bash
-sudo mkdir -p /var/www/qronex && sudo chown $USER:www-data /var/www/qronex
-git clone https://github.com/ametecsindia/QRONEX.git /var/www/qronex && cd /var/www/qronex
+sudo mkdir -p /var/www/client_apps/qronex && sudo chown $USER:www-data /var/www/client_apps/qronex
+git clone https://github.com/ametecsindia/QRONEX.git /var/www/client_apps/qronex && cd /var/www/client_apps/qronex
 composer install --no-dev --optimize-autoloader
 cp deploy/env.production.example .env   # fill every <…>
 php artisan key:generate
@@ -41,7 +41,7 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 ## 4. Web server + HTTPS
 ```bash
 sudo cp deploy/nginx-qronex.conf /etc/nginx/sites-available/qronex
-sudo ln -s /etc/nginx/sites-available/qronex /etc/nginx/sites-enabled/ && sudo rm -f /etc/nginx/sites-enabled/default
+sudo ln -s /etc/nginx/sites-available/qronex /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 sudo certbot --nginx -d qronex.app -d www.qronex.app      # free certificate, auto-renews
 ```
@@ -69,7 +69,7 @@ Sign in as the admin, change the password, set up two-factor sign-in (required f
 
 ## Updating later
 ```bash
-cd /var/www/qronex && ./deploy/deploy.sh
+cd /var/www/client_apps/qronex && ./deploy/deploy.sh
 ```
 
 ## Restore from backup

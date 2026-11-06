@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Update the live server to the latest code. Run as the deploy user from /var/www/qronex.
+# Update the live server to the latest code. Run as the deploy user from /var/www/client_apps/qronex.
 set -euo pipefail
-cd /var/www/qronex
+cd /var/www/client_apps/qronex
 php artisan down --retry=30 || true
 git pull --ff-only
 composer install --no-dev --optimize-autoloader --no-interaction
