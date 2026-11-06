@@ -12,7 +12,7 @@
       <p class="mt-6 text-lg sm:text-xl text-slate-300 max-w-[34rem] leading-relaxed">{{ $cms['hero_sub'] }}</p>
       <div class="mt-9 flex flex-wrap gap-3">
         <a class="site-btn" href="{{ route('register') }}">Start your free trial</a>
-        <a class="site-btn-line text-white" href="#how">See how a punch works</a>
+        <a class="site-btn-line text-white" href="#app">See how a punch works</a>
       </div>
       <dl class="mt-12 grid grid-cols-3 max-w-md gap-6 border-t border-white/15 pt-6">
         <div><dt class="text-sm text-slate-400">New code every</dt><dd class="num text-3xl font-extrabold">3 s</dd></div>
@@ -94,6 +94,130 @@
         </li>
       @endforeach
     </ol>
+  </div>
+</section>
+
+{{-- ON THE PHONE: a live run-through of one punch, in the app's own screens --}}
+<section id="app" class="bg-paper py-20 sm:py-28" x-data="phoneDemo()" x-init="start()">
+  <div class="site-wrap grid lg:grid-cols-[1fr_auto] gap-14 items-center">
+    <div>
+      <p class="text-teal font-semibold">What your employee sees</p>
+      <h2 class="site-h2 mt-2">One tap at the door. Verified in under two seconds.</h2>
+      <p class="site-lede mt-4">This is the QRONEX app, running a real punch. Tap any step to see it.</p>
+      <ol class="mt-10 space-y-2" role="tablist" aria-label="Punch steps">
+        <template x-for="(st, k) in steps" :key="k">
+          <li>
+            <button type="button" role="tab" :aria-selected="s === k" @click="go(k)"
+              class="w-full text-left rounded-2xl px-5 py-4 transition flex gap-4 items-start"
+              :class="s === k ? 'bg-white shadow-[0_10px_30px_-18px_rgba(14,39,71,.45)] ring-1 ring-slate-200' : 'hover:bg-white/60'">
+              <span class="num mt-0.5 h-7 w-7 shrink-0 rounded-full text-sm font-bold flex items-center justify-center transition"
+                :class="s === k ? 'bg-teal text-white' : (s > k ? 'bg-teal-soft text-teal' : 'bg-slate-200 text-slate-500')" x-text="k + 1"></span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-bold text-navy" x-text="st.t"></span>
+                <span class="block mt-0.5 text-slate-600 leading-relaxed" x-text="st.d"></span>
+                <span x-show="s === k" class="mt-3 block h-0.5 rounded bg-slate-200 overflow-hidden"><span class="block h-full bg-teal" :style="`width:${p}%`"></span></span>
+              </span>
+            </button>
+          </li>
+        </template>
+      </ol>
+    </div>
+
+    {{-- Phone --}}
+    <div class="mx-auto order-first lg:order-none" aria-hidden="true">
+      <div class="relative w-[300px] h-[610px] rounded-[46px] bg-ink p-3 shadow-[0_50px_90px_-35px_rgba(8,26,51,.65)] ring-1 ring-black/10">
+        <div class="absolute left-1/2 top-5 -translate-x-1/2 h-5 w-24 rounded-full bg-black z-20"></div>
+        <div class="relative h-full w-full overflow-hidden rounded-[36px] bg-[#F3F6F9] text-navy">
+          {{-- status bar --}}
+          <div class="relative z-10 flex justify-between px-6 pt-3 text-[11px] font-semibold" :class="s === 1 ? 'text-white' : 'text-white'">
+            <span class="num" x-text="clock.slice(0,5)"></span><span>5G ▮▮▮</span>
+          </div>
+
+          {{-- 0 · HOME --}}
+          <div x-show="s === 0" x-transition.opacity.duration.300ms class="absolute inset-0 flex flex-col">
+            <div class="bg-navy text-white px-5 pt-10 pb-6">
+              <div class="text-[11px] text-slate-300">Good morning</div>
+              <div class="text-lg font-bold">Priya Reddy</div>
+              <div class="mt-3 num text-3xl font-extrabold" x-text="clock"></div>
+              <span class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px]"><span class="h-1.5 w-1.5 rounded-full bg-scan"></span>Not checked in yet</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center justify-center">
+              <div class="relative">
+                <span class="absolute inset-0 rounded-full bg-teal-2/30 animate-ping"></span>
+                <span class="relative flex h-32 w-32 flex-col items-center justify-center rounded-full bg-teal text-white shadow-xl transition" :class="tap ? 'scale-90' : ''">
+                  <x-icon name="qr" class="w-10 h-10" /><span class="mt-1 text-sm font-bold">Scan to punch</span>
+                </span>
+              </div>
+              <div class="mt-5 text-xs text-slate-500">Hyderabad HQ · shift 09:30</div>
+              <span class="mt-4 h-9 w-9 rounded-full bg-white/80 ring-8 ring-teal-2/20 transition-all duration-500" :class="tap ? 'opacity-100 scale-75' : 'opacity-0 scale-125'" style="margin-top:-170px"></span>
+            </div>
+            @include('site._phone-tabs', ['on' => 0])
+          </div>
+
+          {{-- 1 · SCAN --}}
+          <div x-show="s === 1" x-transition.opacity.duration.300ms class="absolute inset-0 bg-[#0b1220] flex flex-col items-center">
+            <div class="mt-12 text-white/80 text-xs">Point at the screen by the door</div>
+            <div class="relative mt-6 h-56 w-56">
+              <div class="absolute inset-0 rounded-2xl bg-white p-4 transition duration-700" :class="locked ? 'scale-95' : 'scale-100 rotate-1'">
+                <div x-ref="pqr" class="w-full h-full [&_img]:w-full [&_img]:h-full [&_canvas]:w-full [&_canvas]:h-full"></div>
+              </div>
+              @foreach(['top-0 left-0 border-t-4 border-l-4 rounded-tl-xl', 'top-0 right-0 border-t-4 border-r-4 rounded-tr-xl', 'bottom-0 left-0 border-b-4 border-l-4 rounded-bl-xl', 'bottom-0 right-0 border-b-4 border-r-4 rounded-br-xl'] as $c)
+                <span class="absolute h-9 w-9 transition-colors {{ $c }}" :class="locked ? 'border-teal-2' : 'border-white'" style="margin:-10px"></span>
+              @endforeach
+              <div x-show="!locked" class="scanline absolute left-3 right-3 h-0.5 bg-teal-2 shadow-[0_0_14px_#14B8A6]"></div>
+            </div>
+            <div class="mt-8 rounded-full px-4 py-2 text-xs font-semibold transition" :class="locked ? 'bg-teal-2 text-ink' : 'bg-white/10 text-white'" x-text="locked ? 'Code read · Main entrance' : 'Looking for the QRONEX code…'"></div>
+            <div class="mt-auto mb-8 flex items-center gap-2 text-[11px] text-white/60"><span class="h-1.5 w-1.5 rounded-full bg-teal-2 animate-pulse"></span>GPS ±12 m · fresh fix</div>
+          </div>
+
+          {{-- 2 · VERIFY --}}
+          <div x-show="s === 2" x-transition.opacity.duration.300ms class="absolute inset-0 flex flex-col">
+            <div class="bg-navy text-white px-5 pt-10 pb-4"><div class="text-[11px] text-slate-300">Sending signed request</div><div class="font-bold">Server is checking your punch</div></div>
+            <ul class="flex-1 px-4 py-3 space-y-1.5 text-[12px]">
+              <template x-for="(c, k) in checks" :key="k">
+                <li class="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 shadow-sm transition duration-300" :class="k < done ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-3'">
+                  <span class="h-4 w-4 shrink-0 rounded-full bg-teal-2 text-ink flex items-center justify-center text-[10px] font-bold">✓</span>
+                  <span class="flex-1 truncate" x-text="c[0]"></span><span class="num text-slate-400" x-text="c[1]"></span>
+                </li>
+              </template>
+            </ul>
+            <div class="px-5 pb-6 text-[11px] text-slate-500 num" x-text="`${done} of 11 checks passed`"></div>
+          </div>
+
+          {{-- 3 · RESULT --}}
+          <div x-show="s === 3" x-transition.opacity.duration.300ms class="absolute inset-0 flex flex-col items-center justify-center bg-teal text-white px-6 text-center">
+            <span class="qx-pop flex h-24 w-24 items-center justify-center rounded-full bg-white text-teal"><x-icon name="check" class="w-12 h-12" /></span>
+            <div class="mt-6 text-2xl font-extrabold">IN recorded</div>
+            <div class="mt-1 num text-4xl font-extrabold">09:02:14</div>
+            <div class="mt-3 text-sm text-teal-soft">Hyderabad HQ · Main entrance</div>
+            <div class="mt-6 rounded-2xl bg-white/15 px-4 py-3 text-xs leading-relaxed">On time · 14 m from the door<br>All 11 checks passed</div>
+          </div>
+
+          {{-- 4 · HISTORY --}}
+          <div x-show="s === 4" x-transition.opacity.duration.300ms class="absolute inset-0 flex flex-col">
+            <div class="bg-navy text-white px-5 pt-10 pb-5"><div class="text-lg font-bold">Attendance</div><div class="text-[11px] text-slate-300">Your punches, as HR sees them</div></div>
+            <div class="px-4 py-3 space-y-3 flex-1 text-[12px]">
+              <div class="grid grid-cols-3 gap-2 text-center">
+                @foreach([['First IN', '09:02'], ['Last OUT', '—'], ['Hours', '0:00']] as [$l, $v])
+                  <div class="rounded-xl bg-white py-2.5 shadow-sm"><div class="text-[10px] text-slate-500">{{ $l }}</div><div class="num font-bold text-navy">{{ $v }}</div></div>
+                @endforeach
+              </div>
+              @foreach([['Today', [['IN', '09:02', true]]], ['Yesterday', [['IN', '09:24', false], ['OUT', '18:41', false]]], ['Wed 4 Nov', [['IN', '09:11', false], ['OUT', '18:05', false]]]] as [$day, $rows])
+                <div><div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">{{ $day }}</div>
+                  @foreach($rows as [$io, $t, $new])
+                    <div class="flex items-center gap-2 rounded-lg bg-white px-3 py-2 mb-1 shadow-sm {{ $new ? 'qx-pop ring-2 ring-teal-2' : '' }}">
+                      <span class="rounded px-1.5 py-0.5 text-[10px] font-bold {{ $io === 'IN' ? 'bg-teal-soft text-teal' : 'bg-slate-100 text-slate-600' }}">{{ $io }}</span>
+                      <span class="flex-1">Main entrance</span><span class="num font-semibold">{{ $t }}</span>
+                    </div>
+                  @endforeach
+                </div>
+              @endforeach
+            </div>
+            @include('site._phone-tabs', ['on' => 1])
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -227,6 +351,42 @@ X-Qronex-Signature: t=1762313534,v1=9f2c…
         const r = this.$refs.ring; r.style.animation = 'none'; void r.getBoundingClientRect(); r.style.animation = '';
       },
       start() { this.draw(); setInterval(() => this.draw(), 3000); },
+    };
+  }
+  // Demo only: plays one punch through the app's screens. Timings roughly match a real scan.
+  function phoneDemo() {
+    const steps = [
+      { t: 'Open the app and tap Scan', d: 'Only on the phone HR approved. Shift and office are shown up front.', ms: 2600 },
+      { t: 'Point at the door screen', d: 'The camera reads the code that changes every 3 seconds. GPS takes a fresh fix at the same time.', ms: 2800 },
+      { t: 'The server checks 11 things', d: 'Signed by the phone\'s hardware key, inside the geofence, code fresh, no mock location, no replay…', ms: 4200 },
+      { t: 'Punch recorded', d: 'Green means it is in the ledger. Red explains exactly which check failed.', ms: 2800 },
+      { t: 'History updates instantly', d: 'The employee and HR see the same record, in IST, ready for payroll.', ms: 3200 },
+    ];
+    const checks = [['Employee account active', ''], ['Device registered and approved', ''], ['Request signed by phone key', ''], ['QR cryptographic validity', ''], ['QR time window', '1.4 s'],
+      ['Office and gate active', ''], ['Authorised for this office', ''], ['GPS accuracy', '±12 m'], ['Inside geofence', '14 m'], ['No mock location', ''], ['Not a replay', '']];
+    return {
+      steps, checks, s: 0, p: 0, done: 0, tap: false, locked: false, clock: '09:02:11', timer: null, t0: 0,
+      start() {
+        // Demo clock: starts at 09:02:03 so it lands on the 09:02:14 punch shown on the result screen.
+        let sec = 9 * 3600 + 2 * 60 + 3;
+        const tick = () => { const t = sec % 86400; this.clock = [t / 3600, t / 60 % 60, t % 60].map(n => String(Math.floor(n)).padStart(2, '0')).join(':'); };
+        tick(); setInterval(() => { sec++; tick(); }, 1000);
+        new QRCode(this.$refs.pqr, { text: 'QRX1.demo.3.' + Date.now(), width: 180, height: 180, colorDark: '#0E2747', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+        this.go(0);
+        requestAnimationFrame(this.frame.bind(this));
+      },
+      go(k) {
+        this.s = k; this.t0 = performance.now(); this.p = 0; this.tap = false; this.locked = false; this.done = k > 2 ? 11 : 0;
+      },
+      frame(now) {
+        const el = now - this.t0, ms = this.steps[this.s].ms;
+        this.p = Math.min(100, el / ms * 100);
+        if (this.s === 0) this.tap = el > ms - 700;
+        if (this.s === 1) this.locked = el > ms * .55;
+        if (this.s === 2) this.done = Math.min(11, Math.floor(el / ((ms - 700) / 11)));
+        if (el >= ms) this.go((this.s + 1) % this.steps.length);
+        requestAnimationFrame(this.frame.bind(this));
+      },
     };
   }
 </script>

@@ -15,6 +15,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Behind Cloudflare the origin may get plain http; links must still be https when APP_URL is.
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // ponytail: one rule for every password form — 8+ characters, digits-only allowed (founder's call, 6 Nov 2026)
         \Illuminate\Validation\Rules\Password::defaults(fn () => \Illuminate\Validation\Rules\Password::min(8));
 

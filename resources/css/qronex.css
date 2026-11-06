@@ -61,7 +61,8 @@
   .ring-tick{animation:qx-ring 3s linear infinite;transform-origin:50% 50%;transform:rotate(-90deg)}
   .punch-in{animation:qx-punch .6s cubic-bezier(.2,.9,.3,1.2) 3.2s both}
   .scanline{animation:qx-scan 3s ease-in-out infinite}
-  @media (prefers-reduced-motion: reduce){.ring-tick,.punch-in,.scanline{animation:none}}
+  .qx-pop{animation:qx-punch .5s cubic-bezier(.2,.9,.3,1.3) both}
+  @media (prefers-reduced-motion: reduce){.ring-tick,.punch-in,.scanline,.qx-pop{animation:none}}
 }
 @keyframes qx-ring{from{stroke-dashoffset:0}to{stroke-dashoffset:302}}
 @keyframes qx-punch{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}

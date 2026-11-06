@@ -14,7 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [\App\Http\Middleware\SecurityHeaders::class, \App\Http\Middleware\CompanyUrl::class]);
-        $middleware->trustProxies(at: env('TRUSTED_PROXIES')); // set when behind a load balancer / Cloudflare
+        // ponytail: trust any proxy — qronex.app sits behind Cloudflare. env() here is empty once config is cached, so no env switch.
+        // Upgrade: list Cloudflare's IP ranges instead of '*' if the origin is ever reachable directly.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

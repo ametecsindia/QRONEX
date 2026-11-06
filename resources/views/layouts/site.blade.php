@@ -17,7 +17,7 @@
       <svg viewBox="0 0 32 32" class="h-8 w-8" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0E2747"/><rect x="6" y="6" width="8" height="8" rx="1.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="18" y="6" width="8" height="8" rx="1.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="6" y="18" width="8" height="8" rx="1.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="22" cy="22" r="3.2" fill="#14B8A6"/></svg>
       QRONEX</a>
     <nav class="hidden md:flex gap-6 text-[15px] text-slate-600">
-      <a href="{{ route('home') }}#how" class="hover:text-navy">How it works</a><a href="{{ route('home') }}#security" class="hover:text-navy">Security</a>
+      <a href="{{ route('home') }}#how" class="hover:text-navy">How it works</a><a href="{{ route('home') }}#app" class="hover:text-navy">The app</a><a href="{{ route('home') }}#security" class="hover:text-navy">Security</a>
       <a href="{{ route('pricing') }}" class="hover:text-navy">Pricing</a><a href="{{ route('docs.api') }}" class="hover:text-navy">API</a><a href="{{ route('home') }}#faq" class="hover:text-navy">FAQ</a>
     </nav>
     <div class="ml-auto flex items-center gap-2">
@@ -27,7 +27,7 @@
     </div>
   </div>
   <nav x-show="o" x-cloak x-transition class="md:hidden site-wrap pb-4 flex flex-col gap-3 text-[15px]">
-    <a href="{{ route('home') }}#how">How it works</a><a href="{{ route('home') }}#security">Security</a><a href="{{ route('pricing') }}">Pricing</a><a href="{{ route('docs.api') }}">API</a><a href="{{ route('contact') }}">Contact</a><a href="{{ route('login') }}">Sign in</a>
+    <a href="{{ route('home') }}#how">How it works</a><a href="{{ route('home') }}#app">The app</a><a href="{{ route('home') }}#security">Security</a><a href="{{ route('pricing') }}">Pricing</a><a href="{{ route('docs.api') }}">API</a><a href="{{ route('contact') }}">Contact</a><a href="{{ route('login') }}">Sign in</a>
     <a href="{{ route('register') }}" class="site-btn">Start free trial</a>
   </nav>
 </header>
