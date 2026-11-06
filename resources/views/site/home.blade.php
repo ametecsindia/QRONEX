@@ -81,16 +81,148 @@
   </div>
 </section>
 
-{{-- HOW IT WORKS (sequence) --}}
-<section id="how" class="py-20 sm:py-28">
+{{-- HOW IT WORKS: the 8 setup steps, played live in a browser window. Steps are tabs; the window shows that step's screen. --}}
+<section id="how" class="py-20 sm:py-28" x-data="howDemo()" x-init="start()">
   <div class="site-wrap">
     <h2 class="site-h2">From sign-up to the first punch in one afternoon.</h2>
-    <p class="site-lede mt-4">Everything happens in your browser. The only thing you put at the door is a screen.</p>
-    <ol class="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+    <p class="site-lede mt-4">Everything happens in your browser. The only thing you put at the door is a screen. Watch the whole setup, or tap a step.</p>
+
+    {{-- Browser window --}}
+    <div class="mt-12 rounded-2xl bg-white ring-1 ring-slate-200 shadow-[0_40px_80px_-40px_rgba(14,39,71,.45)] overflow-hidden" aria-hidden="true">
+      <div class="flex items-center gap-3 border-b border-slate-200 bg-paper px-4 py-2.5">
+        <span class="flex gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-[#F87171]"></span><span class="h-2.5 w-2.5 rounded-full bg-scan"></span><span class="h-2.5 w-2.5 rounded-full bg-teal-2"></span></span>
+        <span class="flex-1 truncate rounded-md bg-white px-3 py-1 text-xs text-slate-500 ring-1 ring-slate-200">🔒 qronex.app<span class="text-navy" x-text="urls[s]"></span></span>
+      </div>
+      <div class="relative h-[340px] sm:h-[360px] bg-[#F3F6F9] text-navy text-sm overflow-hidden">
+
+        {{-- 1 Register --}}
+        <div x-show="s === 0" x-transition.opacity class="absolute inset-0 grid place-items-center p-6">
+          <div class="w-full max-w-md rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+            <div class="font-bold text-lg">Start your free trial</div>
+            @foreach([['Company', 'Storm Financial Services', 0], ['Your QRONEX address', 'qronex.app/stormfinancial', 900], ['Work email', 'hr@stormfinancial.in', 1800]] as [$l, $v, $at])
+              <div class="mt-2"><div class="text-[11px] text-slate-500">{{ $l }}</div>
+                <div class="mt-1 h-9 rounded-lg border px-3 flex items-center" :class="el > {{ $at }} && el < {{ $at + 900 }} ? 'border-teal ring-2 ring-teal/20' : 'border-slate-300'"><span x-text="type(@js($v), {{ $at }})"></span><span x-show="el > {{ $at }} && el < {{ $at + 900 }}" class="ml-px h-4 w-px bg-navy animate-pulse"></span></div></div>
+            @endforeach
+            <div class="mt-3 flex items-center gap-2"><span class="text-[11px] text-slate-500">Email code</span>
+              <template x-for="(d, k) in '482913'.split('')"><span class="num h-8 w-7 rounded-md border border-slate-300 grid place-items-center font-bold" :class="el > 2800 + k * 90 ? 'border-teal bg-teal-soft' : ''" x-text="el > 2800 + k * 90 ? d : ''"></span></template>
+              <span x-show="el > 3400" class="qx-pop ml-auto text-teal font-bold">✓ Verified</span></div>
+          </div>
+        </div>
+
+        {{-- 2 Offices --}}
+        <div x-show="s === 1" x-transition.opacity class="absolute inset-0 p-6 sm:p-8">
+          <div class="flex items-center justify-between"><div class="font-bold text-lg">Offices</div><span class="rounded-full bg-teal px-3 py-1.5 text-xs font-semibold text-white transition" :class="el < 500 ? 'scale-95' : ''">+ Add office</span></div>
+          <div class="mt-5 grid sm:grid-cols-3 gap-3">
+            @foreach([['Hyderabad HQ', 'Kondapur · 2 gates', ['Main entrance', 'Back gate']], ['Pune branch', 'Baner · 1 gate', ['Lobby']], ['Chennai branch', 'Guindy · 1 gate', ['Floor 3']]] as $k => [$n, $sub, $gates])
+              <div x-show="el > {{ 400 + $k * 700 }}" class="qx-pop rounded-xl bg-white p-4 ring-1 ring-slate-200 shadow-sm">
+                <div class="flex items-center gap-2"><x-icon name="building" class="w-4 h-4 text-teal" /><span class="font-bold">{{ $n }}</span></div>
+                <div class="mt-1 text-xs text-slate-500">{{ $sub }}</div>
+                <div class="mt-3 flex flex-wrap gap-1.5">@foreach($gates as $g)<span class="rounded-full bg-teal-soft px-2 py-0.5 text-[11px] text-teal">{{ $g }}</span>@endforeach</div>
+              </div>
+            @endforeach
+          </div>
+        </div>
+
+        {{-- 3 Geofence --}}
+        <div x-show="s === 2" x-transition.opacity class="absolute inset-0">
+          <div class="absolute inset-0 opacity-60" style="background-color:#e8eef3;background-image:linear-gradient(#d5dde6 2px,transparent 2px),linear-gradient(90deg,#d5dde6 2px,transparent 2px),linear-gradient(#dfe6ed 1px,transparent 1px),linear-gradient(90deg,#dfe6ed 1px,transparent 1px);background-size:120px 120px,120px 120px,24px 24px,24px 24px"></div>
+          <div class="absolute left-[58%] top-0 bottom-0 w-6 bg-white/80"></div><div class="absolute top-[62%] left-0 right-0 h-5 bg-white/80"></div>
+          <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-teal bg-teal-2/15 transition-all duration-[1200ms] ease-out" :style="`width:${el > 900 ? 220 : 0}px;height:${el > 900 ? 220 : 0}px`"></span>
+            <span class="relative block transition-all duration-500" :class="el > 300 ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'"><svg viewBox="0 0 24 24" class="w-9 h-9 -mt-8 text-navy drop-shadow" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></span>
+          </div>
+          <div class="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-xl bg-white p-3 sm:p-4 shadow ring-1 ring-slate-200 w-44 sm:w-56 text-xs sm:text-sm">
+            <div class="font-bold">Hyderabad HQ</div><div class="num text-xs text-slate-500">17.45728, 78.37048</div>
+            <div class="mt-3 text-[11px] text-slate-500">Radius</div>
+            <div class="mt-1 h-1.5 rounded bg-slate-200"><div class="h-full rounded bg-teal transition-all duration-[1200ms]" :style="`width:${el > 900 ? 40 : 0}%`"></div></div>
+            <div class="mt-1 num font-bold" x-text="`${Math.round(Math.min(200, Math.max(0, (el - 900) / 6)))} m`"></div>
+            <div class="mt-2 text-[11px] text-slate-500">GPS accuracy needed: ±50 m</div>
+          </div>
+        </div>
+
+        {{-- 4 Employees --}}
+        <div x-show="s === 3" x-transition.opacity class="absolute inset-0 p-6 sm:p-8">
+          <div class="flex items-center justify-between"><div class="font-bold text-lg">Employees <span class="num text-slate-400 font-normal" x-text="Math.min(24, Math.floor(el / 110))"></span></div>
+            <span class="rounded-full bg-white px-3 py-1.5 text-xs font-semibold ring-1 ring-slate-300">⤒ employees.csv · <span class="num" x-text="Math.min(24, Math.floor(el / 110))"></span>/24 rows</span></div>
+          <div class="mt-4 rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
+            <div class="grid grid-cols-[90px_1fr_1fr_90px] gap-2 border-b bg-paper px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500"><span>Code</span><span>Name</span><span class="hidden sm:block">Office</span><span>Status</span></div>
+            @foreach([['SF001', 'Priya Reddy', 'Hyderabad HQ'], ['SF002', 'Arjun Mehta', 'Hyderabad HQ'], ['SF003', 'Sana Khan', 'Pune branch'], ['SF004', 'Ravi Kumar', 'Hyderabad HQ'], ['SF005', 'Meera Iyer', 'Chennai branch'], ['SF006', 'Imran Shaikh', 'Pune branch']] as $k => [$c, $n, $o])
+              <div x-show="el > {{ 250 + $k * 380 }}" class="qx-pop grid grid-cols-[90px_1fr_1fr_90px] gap-2 border-b border-slate-100 px-4 py-2"><span class="num text-slate-500">{{ $c }}</span><span class="font-semibold">{{ $n }}</span><span class="hidden sm:block text-slate-600">{{ $o }}</span><span class="text-teal text-xs font-semibold">Active</span></div>
+            @endforeach
+          </div>
+        </div>
+
+        {{-- 5 Devices --}}
+        <div x-show="s === 4" x-transition.opacity class="absolute inset-0 grid sm:grid-cols-[1fr_auto] gap-6 items-center p-6 sm:p-8">
+          <div class="rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-sm">
+            <div class="text-[11px] font-semibold uppercase tracking-wider text-scan">Approval needed</div>
+            <div class="mt-1 font-bold text-lg">Priya Reddy · Pixel 8</div><div class="text-xs text-slate-500">Android 15 · hardware key ✓ · registered 09:41</div>
+            <div class="mt-4 text-[11px] text-slate-500">Type the code shown on her phone</div>
+            <div class="mt-1 h-10 rounded-lg border px-3 flex items-center num text-lg tracking-[.2em] font-bold" :class="el > 2400 ? 'border-teal bg-teal-soft' : 'border-slate-300'" x-text="type('K7QM-2XPA', 600, 140)"></div>
+            <div class="mt-4 flex gap-2"><span class="rounded-full px-4 py-2 text-xs font-semibold transition" :class="el > 2400 ? 'bg-teal text-white' : 'bg-slate-200 text-slate-400'" x-text="el > 2900 ? '✓ Approved' : 'Approve'"></span><span class="rounded-full px-4 py-2 text-xs font-semibold ring-1 ring-slate-300">Reject…</span></div>
+          </div>
+          <div class="hidden sm:block w-40 rounded-[24px] bg-ink p-2"><div class="rounded-[18px] bg-[#F3F6F9] px-3 py-6 text-center">
+            <div class="text-[10px] text-slate-500">Waiting for approval</div><div class="mt-2 num font-extrabold text-navy tracking-wider">K7QM-2XPA</div>
+            <div class="mt-3 text-[10px]" :class="el > 2900 ? 'text-teal font-bold' : 'text-slate-400'" x-text="el > 2900 ? 'Approved — ready to scan' : 'Show this code to HR'"></div></div></div>
+        </div>
+
+        {{-- 6 QR display --}}
+        <div x-show="s === 5" x-transition.opacity class="absolute inset-0 grid place-items-center p-6 bg-[#e6ebf0]">
+          <div class="-mt-6 rounded-2xl bg-ink p-2.5 pb-4 shadow-2xl transition duration-700" :class="el > 300 ? 'scale-100 opacity-100' : 'scale-90 opacity-0'">
+            <div class="rounded-lg bg-white px-6 py-4 text-center w-[260px]">
+              <div class="flex justify-between text-[11px]"><b>Hyderabad HQ · Main entrance</b><span class="text-teal font-semibold">● Live</span></div>
+              <div x-ref="tvqr" class="mx-auto mt-3 h-32 w-32 [&_img]:w-full [&_img]:h-full [&_canvas]:w-full [&_canvas]:h-full"></div>
+              <div class="mt-2 h-1 rounded bg-slate-200 overflow-hidden"><div class="h-full bg-scan" :style="`width:${100 - (el % 3000) / 30}%`"></div></div>
+              <div class="mt-1 text-[10px] text-slate-500">New code every 3 s</div>
+            </div>
+          </div>
+          <div class="absolute bottom-4 rounded-full bg-white px-3 py-1.5 text-[11px] ring-1 ring-slate-200 num">Opened on: lobby TV · Chrome</div>
+        </div>
+
+        {{-- 7 Attendance --}}
+        <div x-show="s === 6" x-transition.opacity class="absolute inset-0 p-6 sm:p-8">
+          <div class="grid grid-cols-3 gap-3">
+            @foreach([['Present', 'Math.min(4, Math.floor(el / 700))', '/24'], ['On time', 'Math.min(3, Math.floor(el / 900))', ''], ['Rejected scans', 'el > 2600 ? 1 : 0', '']] as [$l, $expr, $suf])
+              <div class="rounded-xl bg-white p-3 ring-1 ring-slate-200"><div class="text-[11px] text-slate-500">{{ $l }}</div><div class="num text-2xl font-extrabold"><span x-text="{{ $expr }}"></span><span class="text-sm text-slate-400">{{ $suf }}</span></div></div>
+            @endforeach
+          </div>
+          <div class="mt-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Live ledger</div>
+          <div class="mt-2 space-y-1.5">
+            @foreach([['Priya Reddy', '09:02:14', 'IN', 'ok'], ['Arjun Mehta', '09:06:51', 'IN', 'ok'], ['Ravi Kumar', '09:11:03', 'IN', 'ok'], ['Imran Shaikh', '09:12:40', 'Rejected · outside geofence (412 m)', 'bad'], ['Sana Khan', '09:14:22', 'IN', 'ok']] as $k => [$n, $t, $what, $st])
+              <div x-show="el > {{ 300 + $k * 650 }}" class="qx-pop flex items-center gap-3 rounded-lg bg-white px-3 py-2 ring-1 {{ $st === 'ok' ? 'ring-slate-200' : 'ring-red-200 bg-red-50' }}">
+                <span class="h-2 w-2 rounded-full {{ $st === 'ok' ? 'bg-teal-2' : 'bg-red-500' }}"></span><span class="font-semibold w-28 truncate">{{ $n }}</span>
+                <span class="flex-1 text-xs {{ $st === 'ok' ? 'text-teal font-semibold' : 'text-red-600' }}">{{ $what }}{{ $st === 'ok' ? ' · 11/11 checks' : '' }}</span><span class="num text-xs text-slate-500">{{ $t }}</span></div>
+            @endforeach
+          </div>
+        </div>
+
+        {{-- 8 Logs + API --}}
+        <div x-show="s === 7" x-transition.opacity class="absolute inset-0 grid sm:grid-cols-2 gap-5 p-6 sm:p-8">
+          <div class="rounded-xl bg-white p-5 ring-1 ring-slate-200">
+            <div class="font-bold">Monthly register · November</div><div class="text-xs text-slate-500">24 employees · first IN, last OUT, hours</div>
+            <div class="mt-4 flex gap-2"><span class="rounded-full px-4 py-2 text-xs font-semibold transition" :class="el > 400 && el < 900 ? 'bg-navy-2 scale-95 text-white' : 'bg-navy text-white'">⤓ Excel</span><span class="rounded-full px-4 py-2 text-xs font-semibold ring-1 ring-slate-300">⤓ CSV</span></div>
+            <div x-show="el > 900" class="qx-pop mt-4 flex items-center gap-3 rounded-lg bg-teal-soft px-3 py-2.5"><span class="rounded bg-teal px-1.5 py-0.5 text-[10px] font-bold text-white">XLSX</span><span class="flex-1 text-xs font-semibold">monthly-register-2026-11.xlsx</span><span class="num text-[11px] text-slate-500">18 KB</span></div>
+          </div>
+          <div class="rounded-xl bg-ink p-4 text-[11px] leading-relaxed text-slate-300 font-mono overflow-hidden">
+            <div class="text-teal-glow">POST https://hrms.stormfinancial.in/hooks</div>
+            <div class="text-slate-500">X-Qronex-Signature: t=1793…,v1=9f2c…</div>
+            <pre class="mt-2 whitespace-pre-wrap" x-text="type(hook, 600, 18)"></pre>
+            <div x-show="el > 3000" class="qx-pop mt-2 text-teal-glow">← 200 OK · 41 ms</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{-- Steps = tabs; the top rule fills as each step plays --}}
+    <ol class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-5 sm:gap-y-8" role="tablist" aria-label="Setup steps">
       @foreach(\App\Http\Controllers\SiteController::HOW as $i => [$t, $d])
-        <li class="border-t-2 {{ $i < 4 ? 'border-navy' : 'border-teal' }} pt-5">
-          <div class="num text-sm font-bold {{ $i < 4 ? 'text-navy' : 'text-teal' }}">Step {{ $i + 1 }}</div>
-          <div class="mt-1 text-lg font-bold text-navy">{{ $t }}</div><p class="mt-1.5 text-slate-600 leading-relaxed">{{ $d }}</p>
+        <li>
+          <button type="button" role="tab" :aria-selected="s === {{ $i }}" @click="go({{ $i }})" class="group w-full text-left">
+            <span class="block h-0.5 {{ $i < 4 ? 'bg-navy/20' : 'bg-teal/25' }}"><span class="block h-full {{ $i < 4 ? 'bg-navy' : 'bg-teal' }}" :style="`width:${s > {{ $i }} ? 100 : (s === {{ $i }} ? p : 0)}%`"></span></span>
+            <span class="mt-5 block num text-sm font-bold {{ $i < 4 ? 'text-navy' : 'text-teal' }}">Step {{ $i + 1 }}</span>
+            <span class="mt-1 block text-lg font-bold transition" :class="s === {{ $i }} ? 'text-navy' : 'text-navy/60 group-hover:text-navy'">{{ $t }}</span>
+            <span class="mt-1.5 block leading-relaxed transition" :class="s === {{ $i }} ? 'text-slate-600' : 'text-slate-400 hidden sm:block'">{{ $d }}</span>
+          </button>
         </li>
       @endforeach
     </ol>
@@ -386,6 +518,26 @@ X-Qronex-Signature: t=1762313534,v1=9f2c…
         if (this.s === 2) this.done = Math.min(11, Math.floor(el / ((ms - 700) / 11)));
         if (el >= ms) this.go((this.s + 1) % this.steps.length);
         requestAnimationFrame(this.frame.bind(this));
+      },
+    };
+  }
+  // Demo only: plays the 8 setup steps in the browser window above the step list.
+  function howDemo() {
+    const ms = [4000, 3000, 3000, 3200, 3600, 3400, 3800, 3800];
+    return {
+      s: 0, el: 0, p: 0, t0: 0,
+      urls: ['/register', '/stormfinancial/offices', '/stormfinancial/offices/1/edit', '/stormfinancial/employees', '/stormfinancial/approvals', '/display/stormfinancial/hq/main?key=…', '/stormfinancial', '/stormfinancial/reports'],
+      hook: '{\n  "event": "attendance.created",\n  "employee": "SF001",\n  "direction": "IN",\n  "at": "2026-11-06T09:02:14+05:30",\n  "office": "Hyderabad HQ",\n  "checks_passed": 11\n}',
+      type(text, at, per = 45) { return text.slice(0, Math.max(0, Math.floor((this.el - at) / per))); },
+      go(k) { this.s = k; this.t0 = performance.now(); this.el = 0; this.p = 0; },
+      start() {
+        const draw = () => { this.$refs.tvqr.innerHTML = ''; new QRCode(this.$refs.tvqr, { text: 'QRX1.demo.3.' + Date.now(), width: 144, height: 144, colorDark: '#0E2747', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); };
+        draw(); setInterval(draw, 3000);
+        this.go(0);
+        setInterval(() => {
+          this.el = performance.now() - this.t0; this.p = Math.min(100, this.el / ms[this.s] * 100);
+          if (this.el >= ms[this.s]) this.go((this.s + 1) % ms.length);
+        }, 50);
       },
     };
   }
