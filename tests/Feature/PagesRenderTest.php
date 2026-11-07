@@ -45,6 +45,7 @@ class PagesRenderTest extends TestCase
             $this->get($url)->assertOk();
         }
         $this->get('/stormfinancial/attendance/export.csv')->assertOk();
+        $this->get('/stormfinancial/devices')->assertDontSee('/app/devices', false); // old address only accepts GET → 405 on approve
         $this->get("/display/{$owner->tenant->slug}/{$gate->office->slug}/{$gate->code}?key={$gate->display_secret}")->assertOk()->assertSee('qrcode.min.js', false);
 
         $this->post('/stormfinancial/employees/'.Employee::first()->id.'/activation')->assertRedirect()->assertSessionHas('ok');

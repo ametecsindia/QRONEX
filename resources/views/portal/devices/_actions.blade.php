@@ -11,7 +11,7 @@
           <div class="text-lg font-bold text-navy" x-text="{approve:'Approve phone', reject:'Reject phone', revoke:'Revoke phone'}[m]"></div>
           <div class="text-sm text-slate-600">{{ $d->employee->name }} · {{ $d->model }} <span class="text-slate-400">{{ $d->install_ref }}</span></div>
         </div>
-        <form method="post" :action="'{{ url('app/devices/'.$d->id) }}/' + m" class="space-y-4">
+        <form method="post" :action="'{{ route('portal.devices.show', $d) }}/' + m" class="space-y-4">
           @csrf
           <template x-if="m === 'approve'"><div>
             @if($d->approval_code)
