@@ -24,6 +24,14 @@ class MailSettings
         }
     }
 
+    /** Where tickets and enquiries are emailed: the Support inbox, else the From email set here (else .env). */
+    public static function supportAddress(): ?string
+    {
+        $m = self::current();
+
+        return ($m['support_address'] ?? null) ?: ($m['from_address'] ?? null);
+    }
+
     /** What the form shows: saved values, else the current .env config. Never the password. */
     public static function current(): array
     {

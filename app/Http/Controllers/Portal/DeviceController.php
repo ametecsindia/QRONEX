@@ -24,7 +24,7 @@ class DeviceController extends Controller
         $counts = Device::when($scope !== null, fn ($q) => $q->whereHas('employee', fn ($e) => $e->whereIn('office_id', $scope)))
             ->selectRaw('status, count(*) c')->groupBy('status')->pluck('c', 'status');
 
-        return view('portal.devices.index', ['devices' => $devices, 'counts' => $counts, 'limit' => TenantSetting::first()?->device_limit ?? 1]);
+        return view('portal.devices.index', ['devices' => $devices, 'counts' => $counts, 'limit' => 1]);
     }
 
     /** Device detail + full approval history + the employee's other phones (ROVEXY device history). */
@@ -69,6 +69,18 @@ class DeviceController extends Controller
         }
 
         if ($action === 'approve') {
+            // Approving binds the employee to an office + gate and sets where they may scan (defaults: the current binding).
+            $emp = $device->employee;
+            $request->mergeIfMissing(['office_id' => $emp->office_id, 'gate_id' => $emp->gate_id, 'scan_scope' => $emp->scan_scope ?: 'office']);
+            $b = $request->validate([
+                'office_id' => ['required', \Illuminate\Validation\Rule::exists('offices', 'id')->where('tenant_id', $device->tenant_id)],
+                'gate_id' => ['nullable', \Illuminate\Validation\Rule::exists('gates', 'id')->where('office_id', $request->input('office_id'))],
+                'scan_scope' => 'required|in:'.implode(',', array_keys(\App\Models\Employee::SCAN_SCOPES)),
+            ], ['gate_id.exists' => 'Pick a gate of the selected office.']);
+            if ($b['scan_scope'] === 'gate' && empty($b['gate_id'])) {
+                return back()->withErrors(['gate_id' => 'Pick the gate this employee is bound to.']);
+            }
+            $device->employee->update($b);
             try {
                 \App\Services\Approvals::approveDevice($device, $request->user());
             } catch (\RuntimeException $e) {

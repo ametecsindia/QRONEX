@@ -19,11 +19,11 @@ class Approvals
     public static function approveDevice(Device $d, ?User $by): void
     {
         DB::transaction(function () use ($d, $by) {
-            $limit = TenantSetting::withoutGlobalScopes()->where('tenant_id', $d->tenant_id)->value('device_limit') ?: 1;
+            $limit = $d->employee->deviceLimit();
             $active = Device::withoutGlobalScopes()->where('employee_id', $d->employee_id)->where('status', 'approved')->where('id', '!=', $d->id);
             if ($active->count() >= $limit) {
                 if (! $d->replaces_device_id) {
-                    throw new RuntimeException("{$d->employee->name} already has {$active->count()} approved device(s); the company limit is {$limit}. Revoke one first.");
+                    throw new RuntimeException("{$d->employee->name} already has {$active->count()} approved device(s); the limit is {$limit}. Revoke one first, or a company admin can allow more phones on the employee's page.");
                 }
                 $old = Device::withoutGlobalScopes()->find($d->replaces_device_id);
                 $old?->update(['status' => 'revoked', 'token_hash' => null]);

@@ -28,7 +28,6 @@ class PolicyController extends Controller
         $d = $request->validate([
             'qr_interval_s' => "required|integer|between:{$b['qr_min']},{$b['qr_max']}",
             'grace_s' => "required|integer|between:0,{$b['grace_max']}",
-            'device_limit' => "required|integer|between:1,{$b['device_max']}",
             'duplicate_window_min' => 'required|integer|between:0,60',
             'gps_accuracy_m' => 'required|integer|between:10,500',
             'retention_months' => 'required|integer|between:6,120',

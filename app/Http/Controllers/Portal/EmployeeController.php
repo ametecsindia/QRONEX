@@ -19,7 +19,7 @@ class EmployeeController extends Controller
     {
         $scope = auth()->user()->officeScope();
 
-        return Office::when($scope !== null, fn ($q) => $q->whereIn('id', $scope))->orderBy('code')->get();
+        return Office::with(['gates' => fn ($q) => $q->where('is_active', true)->orderBy('name')])->when($scope !== null, fn ($q) => $q->whereIn('id', $scope))->orderBy('code')->get();
     }
 
     private function authorizeEmployee(Employee $employee): void
@@ -226,7 +226,14 @@ class EmployeeController extends Controller
             'designation' => 'nullable|string|max:80',
             'hrms_ref' => 'nullable|string|max:60',
             'office_id' => ['required', Rule::in($this->offices()->pluck('id')->all())],
+            'gate_id' => ['nullable', Rule::exists('gates', 'id')->where('office_id', $request->input('office_id'))],
+            'scan_scope' => 'required|in:'.implode(',', array_keys(Employee::SCAN_SCOPES)),
             'status' => 'required|in:active,inactive',
-        ]);
+        ], ['gate_id.exists' => 'Pick a gate of the selected office.']) + (
+            // Extra phones are an exception only a company admin can grant.
+            $request->user()->can('manage-company') && $request->has('max_devices')
+                ? ['max_devices' => (int) $request->validate(['max_devices' => 'required|integer|between:1,'.\App\Models\PlatformSetting::get('device_limit_max', 3)])['max_devices'] ?: null]
+                : []
+        );
     }
 }

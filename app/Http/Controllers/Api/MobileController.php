@@ -69,9 +69,9 @@ class MobileController extends Controller
         $device = DB::transaction(function () use ($existing, $employee, $tenant, $d, $settings, $token, $pem) {
             $approvedCount = Device::withoutGlobalScopes()->where('employee_id', $employee->id)->where('status', 'approved')
                 ->when($existing, fn ($q) => $q->where('id', '!=', $existing->id))->count();
-            $status = ! $settings->require_device_approval && $approvedCount < $settings->device_limit ? 'approved' : 'pending';
+            $status = ! $settings->require_device_approval && $approvedCount < $employee->deviceLimit() ? 'approved' : 'pending';
             // A new phone while the employee is at the limit = replacement request: approving it revokes the old phone.
-            $replaces = ! $existing && $approvedCount >= $settings->device_limit
+            $replaces = ! $existing && $approvedCount >= $employee->deviceLimit()
                 ? Device::withoutGlobalScopes()->where('employee_id', $employee->id)->where('status', 'approved')->latest('approved_at')->value('id') : null;
             if ($existing?->status === 'approved') {
                 $status = 'approved'; // re-activating the same approved phone keeps it approved

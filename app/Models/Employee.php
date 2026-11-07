@@ -20,7 +20,27 @@ class Employee extends Model
         return ['activation_expires_at' => 'datetime'];
     }
 
+    public const SCAN_SCOPES = ['gate' => 'Only the bound gate', 'office' => 'Any gate of the bound office', 'any' => 'Any office and gate'];
+
     public function office(): BelongsTo { return $this->belongsTo(Office::class); }
+    public function gate(): BelongsTo { return $this->belongsTo(Gate::class); }
+
+    /** One phone per employee; more only as an exception granted by a company admin. */
+    public function deviceLimit(): int
+    {
+        return max(1, (int) $this->max_devices);
+    }
+
+    /** Can this employee punch at $gate? null = yes, otherwise the reason. */
+    public function scanBlockedAt(Gate $gate): ?string
+    {
+        return match ($this->scan_scope ?: 'office') {
+            'any' => null,
+            'gate' => $this->gate_id && (int) $this->gate_id !== (int) $gate->id ? 'Bound to gate '.($this->gate?->name ?? '#'.$this->gate_id).' only'
+                : ((int) $this->office_id !== (int) $gate->office_id ? 'Assigned office: '.($this->office?->name ?? 'none') : null),
+            default => (int) $this->office_id !== (int) $gate->office_id ? 'Assigned office: '.($this->office?->name ?? 'none') : null,
+        };
+    }
 
     /** Inactive + every device revoked (the app is signed out) + webhook. Same path for portal and API. Returns devices revoked. */
     public function deactivate(): int

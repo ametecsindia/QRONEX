@@ -53,7 +53,7 @@ class HelpController extends Controller
 
     public static function notifyStaff(SupportTicket $t, string $body): void
     {
-        User::whereNull('tenant_id')->where('is_active', true)->get()
-            ->each(fn ($u) => Notifier::email('ticket_staff', $u->email, ['ticket' => $t->ref, 'subject' => $t->subject, 'from' => "{$t->name} <{$t->email}>", 'body' => $body]));
+        // The inbox set in Super Admin → Email & SMS, not platform users' login emails (those may not be real mailboxes).
+        Notifier::email('ticket_staff', \App\Support\MailSettings::supportAddress(), ['ticket' => $t->ref, 'subject' => $t->subject, 'from' => "{$t->name} <{$t->email}>", 'body' => $body]);
     }
 }

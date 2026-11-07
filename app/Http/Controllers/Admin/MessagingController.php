@@ -54,6 +54,7 @@ class MessagingController extends Controller
             'password' => 'nullable|string|max:190',
             'from_address' => 'required|email|max:190',
             'from_name' => 'required|string|max:100',
+            'support_address' => 'nullable|email|max:190',
         ], ['host.required_if' => 'Enter the SMTP server, e.g. smtp.gmail.com.', 'port.required_if' => 'Enter the SMTP port, e.g. 587.']);
 
         $old = \App\Support\MailSettings::saved() ?? [];

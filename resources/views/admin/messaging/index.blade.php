@@ -41,6 +41,7 @@
       <x-field name="from_address" label="From email" type="email" :value="$mail['from_address']" required placeholder="no-reply@qronex.app" />
       <x-field name="from_name" label="From name" :value="$mail['from_name']" required placeholder="QRONEX" />
     </div>
+    <x-field name="support_address" label="Support inbox" type="email" :value="$mail['support_address'] ?? ''" placeholder="Leave blank to use the From email" hint="New tickets, ticket replies and website enquiries are emailed here." />
     @can('manage-platform')<div class="flex items-center gap-3"><button class="btn">Save email settings</button><span class="text-xs text-slate-500">Then send a test below.</span></div>@endcan
     </fieldset>
   </form>

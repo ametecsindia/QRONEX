@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\AttendanceEvent;
 use App\Models\AttendanceRejection;
 use App\Models\Device;
+use App\Models\Employee;
 use App\Models\Gate;
 use App\Models\TenantSetting;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -46,7 +47,9 @@ class AttendanceVerifier
 
         $office = $gate?->office;
         $this->add('GATE_INACTIVE', 'Office and gate active', $gate && $gate->is_active && $office?->is_active, $gate ? "{$office?->name} · {$gate->name}" : '');
-        $this->add('OFFICE_NOT_ASSIGNED', 'Employee authorised for this office', $office && (int) $employee->office_id === (int) $office->id, 'Assigned office: '.($employee->office?->name ?? 'none'));
+        $blocked = $gate ? $employee->scanBlockedAt($gate) : 'Unknown gate';
+        $this->add('OFFICE_NOT_ASSIGNED', 'Employee authorised for this office and gate', $office && $blocked === null,
+            $blocked ?? (Employee::SCAN_SCOPES[$employee->scan_scope ?: 'office'] ?? '').' · '.($office?->name ?? ''));
 
         $acc = (int) round($in['accuracy']);
         $this->add('LOW_GPS_ACCURACY', 'Reported location accuracy', $acc <= $settings->gps_accuracy_m, "±{$acc} m reported · policy ±{$settings->gps_accuracy_m} m");

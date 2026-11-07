@@ -142,6 +142,11 @@ class RemoteCorrectionsSupportTest extends TestCase
 
         $this->actingAs($this->owner())->post('/stormfinancial/help', ['subject' => 'Help', 'area' => 'app', 'priority' => 'high', 'body' => 'App crashes'])->assertRedirect();
         $t = SupportTicket::where('subject', 'Help')->first();
+        // Staff alerts go to the inbox set in Super Admin → Email & SMS, not to platform users' login emails.
+        $this->assertSame([config('mail.from.address')], \App\Models\MessageLog::where('template_key', 'ticket_staff')->distinct()->pluck('to')->all());
+        \App\Models\PlatformSetting::put('mail', ['mailer' => 'log', 'security' => 'tls', 'from_address' => 'no-reply@x.example', 'from_name' => 'QRONEX', 'support_address' => 'help@ametecs.example']);
+        $this->actingAs($this->owner())->post("/stormfinancial/help/{$t->id}", ['body' => 'Any update?']);
+        $this->assertSame('help@ametecs.example', \App\Models\MessageLog::where('template_key', 'ticket_staff')->latest('id')->value('to'));
         $this->actingAs(User::where('email', 'admin@qronex.test')->first())->post("/super/support/{$t->id}", ['body' => 'Fixed in 0.2', 'close' => '1'])->assertSessionHas('ok');
         $this->assertSame('closed', $t->fresh()->status);
         $this->actingAs($this->owner())->get("/stormfinancial/help/{$t->id}")->assertOk()->assertSee('Fixed in 0.2');

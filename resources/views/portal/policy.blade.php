@@ -23,7 +23,7 @@
     </div>
     <div class="card grid sm:grid-cols-2 gap-4">
       <div class="col-span-full"><div class="card-t flex items-center gap-2"><x-icon name="phone" class="w-5 h-5 text-teal" /> Phones</div><p class="text-xs text-slate-500 mt-1">Each phone holds a hardware key; a copied login won't work on another phone.</p></div>
-      <x-field name="device_limit" label="Phones per employee" type="number" min="1" :max="$b['device_max']" :value="$s->device_limit" :hint="'Max '.$b['device_max']" required />
+      <p class="text-sm text-slate-600 col-span-full">One phone per employee. A company admin can allow more for a specific employee on the employee's page.</p>
       <label class="flex items-start gap-2 text-sm col-span-full rounded-lg bg-slate-50 p-3"><input class="mt-0.5" type="checkbox" name="require_device_approval" value="1" @checked(old('require_device_approval', $s->require_device_approval))>
         <span><b class="text-navy">New phones need approval</b><br><span class="text-xs text-slate-500">The administrator types the 8-character match code shown on the employee's phone.</span></span></label>
     </div>
