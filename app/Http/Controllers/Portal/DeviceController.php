@@ -80,12 +80,12 @@ class DeviceController extends Controller
             if ($b['scan_scope'] === 'gate' && empty($b['gate_id'])) {
                 return back()->withErrors(['gate_id' => 'Pick the gate this employee is bound to.']);
             }
-            $device->employee->update($b);
             try {
                 \App\Services\Approvals::approveDevice($device, $request->user());
             } catch (\RuntimeException $e) {
                 return back()->withErrors(['device' => $e->getMessage()]);
             }
+            $device->employee->update($b); // only once the phone is actually approved
         } else {
             $device->update(['status' => $action === 'reject' ? 'rejected' : 'revoked'] + ($action === 'revoke' ? ['token_hash' => null, 'approval_code' => null] : []));
             $device->log($action === 'reject' ? 'rejected' : 'revoked', $request->user(), $reason);

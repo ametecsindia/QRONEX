@@ -73,8 +73,10 @@ class MobileController extends Controller
             // A new phone while the employee is at the limit = replacement request: approving it revokes the old phone.
             $replaces = ! $existing && $approvedCount >= $employee->deviceLimit()
                 ? Device::withoutGlobalScopes()->where('employee_id', $employee->id)->where('status', 'approved')->latest('approved_at')->value('id') : null;
-            if ($existing?->status === 'approved') {
-                $status = 'approved'; // re-activating the same approved phone keeps it approved
+            // Re-activating the same approved phone keeps it approved — only if it proves it is the same phone (same hardware key).
+            // A copied install_ref with another key (or none) goes back to approval with a new match code.
+            if ($existing?->status === 'approved' && $existing->public_key && $pem === $existing->public_key) {
+                $status = 'approved';
             }
 
             $attrs = ['platform' => $d['platform'], 'model' => $d['model'], 'os_version' => $d['os_version'], 'status' => $status, 'token_hash' => hash('sha256', $token), 'last_seen_at' => now()]

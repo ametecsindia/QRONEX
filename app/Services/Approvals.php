@@ -65,11 +65,11 @@ class Approvals
     /** Approving never edits an existing punch: it adds a MANUAL_EXCEPTION event marked adjusted. */
     public static function decideCorrection(PunchCorrection $c, bool $approve, ?User $by): ?AttendanceEvent
     {
-        if ($c->status !== 'pending') {
-            throw new RuntimeException("Correction is already {$c->status}.");
-        }
-
         return DB::transaction(function () use ($c, $approve, $by) {
+            $status = PunchCorrection::withoutGlobalScopes()->whereKey($c->id)->lockForUpdate()->value('status'); // double click = one punch
+            if ($status !== 'pending') {
+                throw new RuntimeException("Correction is already {$status}.");
+            }
             $c->update(['status' => $approve ? 'approved' : 'rejected', 'decided_by' => $by?->id, 'decided_at' => now()]);
             AuditLog::create(['tenant_id' => $c->tenant_id, 'user_id' => $by?->id, 'action' => $approve ? 'correction.approved' : 'correction.rejected', 'subject' => $c->ref,
                 'meta' => ['employee' => $c->employee->employee_code, 'type' => $c->type, 'at' => $c->punch_at->toIso8601ZuluString()]]);

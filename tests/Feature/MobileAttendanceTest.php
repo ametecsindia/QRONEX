@@ -59,6 +59,8 @@ class MobileAttendanceTest extends TestCase
         $this->scan($token)->assertOk()->assertJsonPath('ok', true)->assertJsonPath('event.type', 'IN')->assertJsonCount(11, 'checks');
         $this->scan($token, ['type' => 'IN'])->assertStatus(422)->assertJsonPath('reason_code', 'DUPLICATE');
         $this->withToken($token)->getJson('/api/v1/history')->assertOk()->assertJsonCount(1, 'events');
+        // the 1.0.1+ app uses the module path, which works on qronex.app too
+        $this->withToken($token)->getJson('/api/qronex/v1/history')->assertOk()->assertJsonCount(1, 'events');
     }
 
     public function test_rejections(): void

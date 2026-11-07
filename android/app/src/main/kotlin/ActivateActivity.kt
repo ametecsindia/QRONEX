@@ -37,7 +37,7 @@ class ActivateActivity : Activity() {
                 setColor(C.WHITE); val r = dp(28).toFloat(); setCornerRadii(floatArrayOf(r, r, r, r, 0f, 0f, 0f, 0f))
             }
         }
-        val company = input("e.g. storm-financial", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
+        val company = input("e.g. storm-financial or prs.yourcompany.com/acme", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
         val code = input("e.g. SF-1042", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS)
         val otp = input("e.g. K7QX-2M9P", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS)
         val server = input("https://qronex.app", InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI, store.server)
@@ -58,8 +58,10 @@ class ActivateActivity : Activity() {
         lateinit var go: android.widget.TextView
         go = button("Activate") {
             err.visibility = android.view.View.GONE
-            val (base, fromServer) = Addr.split(server.text.toString())
-            val slug = company.text.toString().trim().trimEnd('/').substringAfterLast('/').lowercase().ifBlank { fromServer.lowercase() }
+            // "acme" → this server; "prs.ametecs.in/acme" or "https://ept.example.com/acme" (from the SmartPRS / SmartEPT activation email) → that server + company.
+            val typed = company.text.toString().trim()
+            val (base, fromServer) = Addr.split(if (typed.contains('.')) typed else server.text.toString())
+            val slug = (if (typed.contains('.')) fromServer else typed.trimEnd('/').substringAfterLast('/')).lowercase().ifBlank { fromServer.lowercase() }
             if (slug.isBlank() || code.text.isBlank() || otp.text.isBlank()) {
                 err.text = "Fill in all three codes."; err.visibility = android.view.View.VISIBLE; return@button
             }

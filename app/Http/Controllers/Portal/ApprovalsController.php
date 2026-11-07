@@ -40,6 +40,9 @@ class ApprovalsController extends Controller
     public function remote(Request $request, RemotePermission $permission)
     {
         $this->inScope($request, $permission);
+        if ($permission->status !== 'pending') {
+            return back()->withErrors(['remote' => "Remote request {$permission->ref} is already {$permission->status}."]);
+        }
         if ($request->filled('lat')) { // approver may fix / add the location before approving
             $d = $request->validate(['lat' => 'numeric|between:-90,90', 'lng' => 'required_with:lat|numeric|between:-180,180', 'radius_m' => 'nullable|integer|between:50,5000']);
             $permission->update($d + ['radius_m' => $d['radius_m'] ?? $permission->radius_m ?? 250, 'location_label' => $permission->location_label ?? 'Set by approver']);

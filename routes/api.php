@@ -7,8 +7,9 @@ use App\Http\Middleware\ApiKeyAuth;
 use App\Http\Middleware\DeviceToken;
 use Illuminate\Support\Facades\Route;
 
-// Employee app — see mobile/README.md
-Route::prefix('v1')->group(function () {
+// Employee app — see mobile/README.md. Also at /api/qronex/v1 (the address the QR attendance module uses inside
+// SmartPRS / SmartEPT), so one app works against QRONEX and both host apps.
+foreach (['v1', 'qronex/v1'] as $mobilePrefix) Route::prefix($mobilePrefix)->group(function () {
     Route::post('activate', [MobileController::class, 'activate'])->middleware('throttle:10,1');
 
     Route::middleware(DeviceToken::class)->group(function () {

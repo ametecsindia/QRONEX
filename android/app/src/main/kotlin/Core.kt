@@ -134,7 +134,7 @@ object Api {
 
     /** Blocking; call from bg{}. Signs the request when this phone has a device key. */
     fun call(store: Store, method: String, path: String, body: JSONObject? = null): Res {
-        val url = URL(store.server + "/api/v1/" + path)
+        val url = URL(store.server + "/api/qronex/v1/" + path) // same path on qronex.app, SmartPRS and SmartEPT
         val bytes = (body?.toString() ?: "").toByteArray()
         val c = url.openConnection() as HttpURLConnection
         return try {
