@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [\App\Http\Middleware\SecurityHeaders::class, \App\Http\Middleware\CompanyUrl::class]);
+        $middleware->alias(['throttle' => \App\Http\Middleware\ThrottlePerRoute::class]);
         // ponytail: trust any proxy — qronex.app sits behind Cloudflare. env() here is empty once config is cached, so no env switch.
         // Upgrade: list Cloudflare's IP ranges instead of '*' if the origin is ever reachable directly.
         $middleware->trustProxies(at: '*');
