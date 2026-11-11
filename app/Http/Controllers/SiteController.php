@@ -22,10 +22,10 @@ class SiteController extends Controller
     public const FAQS = [['Do we need biometric hardware?', 'No. QRONEX needs a screen with a web browser at the entrance and the QRONEX app on employee phones.'], ['Can we use an Android tablet?', 'Yes. Any reasonably recent Android tablet with Chrome can run the display page. A wall mount and permanent power are recommended.'], ['Can we display the QR on a television?', 'Yes. A smart TV browser or a TV connected to a small PC or streaming stick with a browser works, as long as it stays online.'], ['Is office Wi-Fi required?', 'No. The display needs an internet connection (Wi-Fi or a SIM-based tablet), and employees can use mobile data.'], ['Can employees use mobile data?', 'Yes. Punches are small requests and work over normal 4G/5G data.'], ['Can employees mark attendance from home?', 'Only when an administrator approves a remote permission (work from home, field duty, client site) for specific dates. Optionally, a home location and radius can be required.'], ['What happens when GPS is inaccurate?', 'Each punch reports location accuracy. If accuracy is worse than your policy (for example ±50 m), the punch is rejected with a clear reason and the employee can retry near a window or outdoors.'], ['Can an employee register multiple devices?', 'By default one active device per employee. Administrators can raise the limit and approve device replacements.'], ['Can we download attendance in Excel?', 'Yes. The ledger and reports export to CSV, which opens directly in Excel.'], ['Can we connect our existing HRMS?', 'Yes, through scoped REST APIs and signed webhooks. Integration keys can read verified attendance but cannot create verified punches.'], ['Can the QR be opened outside the office?', 'The display URL can open anywhere, but a scan is only accepted after the server checks the token time window, the employee, the approved device and the geofence. These checks reduce misuse; they do not prove presence with certainty.'], ['What happens if internet connectivity fails?', 'The display shows an offline indicator and stops issuing codes. Employees cannot punch until the display or the phone reconnects; missed punches can be added later as approved corrections.']];
 
     public const LEGAL = [
-        'privacy' => ['Privacy Policy', 'what attendance data is collected (identity, device reference, punch time, location at punch time only), purpose limitation, processors, employee notices, rights requests and grievance contact under applicable Indian law.'],
-        'terms' => ['Terms of Service', 'service scope (attendance capture only — no payroll), customer responsibilities, acceptable use, availability, liability and governing law.'],
-        'refund' => ['Refund & Cancellation Policy', 'trial terms, cancellation timing, treatment of onboarding fees, pro-rata rules and refund timelines.'],
-        'retention' => ['Data Retention Policy', 'default retention period for attendance events, export before closure, deletion on contract end and backup expiry.'],
+        'privacy' => ['Privacy Policy'],
+        'terms' => ['Terms of Service'],
+        'refund' => ['Refund & Cancellation Policy'],
+        'retention' => ['Data Retention Policy'],
     ];
 
     public static function cms(): array
@@ -101,6 +101,6 @@ class SiteController extends Controller
     {
         abort_unless(isset(self::LEGAL[$page]), 404);
 
-        return view('site.legal', ['page' => $page, 'title' => self::LEGAL[$page][0], 'covers' => self::LEGAL[$page][1]]);
+        return view('site.legal', ['page' => $page, 'title' => self::LEGAL[$page][0]]);
     }
 }

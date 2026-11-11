@@ -131,7 +131,7 @@ class RemoteCorrectionsSupportTest extends TestCase
 
     public function test_support_tickets_and_public_website(): void
     {
-        foreach (['/', '/pricing?employees=40', '/pricing?employees=900', '/contact', '/legal/privacy'] as $u) {
+        foreach (['/', '/pricing?employees=40', '/pricing?employees=900', '/contact', '/legal/privacy', '/legal/terms', '/legal/refund', '/legal/retention'] as $u) {
             $this->get($u)->assertOk();
         }
         $this->get('/pricing?employees=40')->assertSee('₹8,920'); // same maths as the prototype
